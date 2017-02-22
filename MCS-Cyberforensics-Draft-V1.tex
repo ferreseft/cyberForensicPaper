@@ -29,7 +29,7 @@
 
 \begin{document}
 %\title{KRAFT -- \textbf{K}ernel module d\textbf{R}iven m\textbf{A}chinery control system \textbf{F}orensics using remo\textbf{T}e memory acquisition}
-\title{Empirical Evaluation of Suitability of Existing Forensics Solutions to Support Live Forensics on SCADA Mchinery Control Systems}
+\title{Empirical Evaluation of Forensics Solutions for Live Forensics on SCADA Mchinery Control Systems}
 \author{\IEEEauthorblockN{Avinash Srinivasan}
 \IEEEauthorblockA{
 Computer and Information Sciences\\
@@ -45,9 +45,10 @@ Email: frank.ferrese@navy.mil
 \maketitle
 
 \begin{abstract}
-SCADA-based Machinery Control Systems (SCADA-MCSs) from leading vendors today are more vulnerable than ever before. To further complicate the secure and reliable operations of these systems, their cyber-physical environments open a whole new world of vulnerabilities which can be readily exploited, many of which are freely available on the Internet. SCADA-MCS being mission critical, must be continuously operational with zero downtime. Consequently, a forensic investigator cannot shut down the system to capture evidentiary data and analyze them. In such scenarios where there is zero downtime tolerance, live forensics is the only viable solution for conducting a digital investigation. Live forensics involves performing data acquisition and analysis on a running system. This will allow for a complete and detailed analysis while the system is still up and running, therefore having little to no effect on the mission.
+Critical infrastructures, especially machinery control systems (MCS) found onboard modern U.S. Navy warships and other military systems, are affected because of their use of commercial automation solutions. Therefore, a critical requirement is building tools and techniques to support rapid, effective, and effiicient incident response and cyberforensics capabilities. MCS being mission critical, have zero-tolerance when it comes to downtime. Consequently, a forensic investigator cannot shutdown the system to capture evidentiary data. Furthermore, todays sophisticated cyber attacks are primarily executed from the memory with little evidence on the persisten storage. Therefore, live forensics seems to be the only viable solution for conducting incident response and cyberforensics since evidentary data is primarily volatile. 
+%Live forensics involves performing data acquisition and analysis on a running system. This will allow for a complete and detailed analysis while the system is still up and running, therefore having little to no effect on the mission.
 
-In this paper, we evaluate some of the most prpolar and powerful forensics tools and frameworks to determine their suitability for porting to SCADA environment, specifically for MCS. We design and develop a rudimentary prototype of a live forensics framework for SCADA-MCS that can readily integrate the existing tools and techniques on to a common platform. Our prototype is designed conforming to \textit{Open Systems Architecture} (OSA) to support cross vendor and cross platform solutions. Our empirical analysis highlights the strengths and weakness of tools studied proposes other requisite capabilities for tools to support a comprahensive live forensics on SCADA-MCS.
+In this paper, we evaluate some of the most prpolar and powerful forensics tools and frameworks to determine their suitability for porting to mission critical MCS environment. We design and develop a rudimentary prototype of a live forensics framework for SCADA-MCS that can readily integrate the existing tools and techniques on to a common platform. Our prototype is designed conforming to \textit{Open Systems Architecture} (OSA) to support cross vendor and cross platform solutions. Our empirical analysis highlights the strengths and weakness of tools studied proposes other requisite capabilities for tools to support a comprahensive live forensics on SCADA-MCS.
 \end{abstract}
 
 \begin{keywords}
@@ -81,12 +82,24 @@ European Energy Company & 2016 & Windws Antivirus &  SFG malware & Security appl
 Current live forensic tools are typically used to acquire and examine memory from computers running either Windows or Unix. This makes them incompatible with embedded devices found on SCADA systems that have their own bespoke operating system. Additionaly, only a limited number of forensics tools have been developed for SCADA systems, with no development of tools to acquire the program code from PLCs. With direct access to the memory addresses of the PLC, PLC debugging tools have promising functionalities as a forensic tool , such as the ``Snapshot'' function that allows users to directly take values from the memory addresses of the PLC, without vendor specific software.
 
 \subsection{Attacks on Control Systems -- Scope of the Problem}
+\begin{itemize}
+\item According to NCCIS/ICS-CERT~\cite{dhs-ics-cert}, the number of ICS incident reported in the United States between 2012 - 2015 are as follows -- 197 incidents (2012), 257 incidents (2013), 245 incidents (2014), 295 incidents in (2015). 
+
+\item In July 2014, ICS customers seeking a PLC software update inadvertently downloaded a maliciously planted Trojan, dubbed Havex~\cite{havex}. The Havex Trojan scans a widely used PLC standard called open protocol communications (OPC) and is believed to gather information about vulnerabilities in the target system, as a way to test code before a larger attack. The Havex Trojan affected a German manufacturing company, a Belgium PLC VPN software company and a Swiss company that produces industrial cameras. 
+
+\item Another 2014 cyber-attack known as the ``The Mask''~\cite{mask} was a widespread espionage malware attack targeted at government agencies, energy, oil and gas companies and research organizations. The malware intercepts all communication channels and collects vital information from the victim's machine, to facilitate the theft of private information from ICS's. 
+
+\item In 2014, Maritime ships using global positioning systems (GPS), automatic identification systems (AIS), and electronic chart display and information system (ECDIS) were found to have uncovered serious flaws in security~\cite{sea-hack}. 
+\end{itemize}
+
+
 
 \subsection{Solution Novelty and Summary of Contributions}
 The proposed solution is designed conforming to the guidelines of OSA/OSE standards. Consequently, the solution framework provides several benefits over custom and proprietary solutions. Some of the the key benefits are delineated below --
 \begin{itemize}
 \item Empirically measures the performance of state-of-the-art forensics tools. 
 \item Empirical validation is performed in realworld SCADA-MCS settings.
+\item Analyze the suitability of MCS components to support lightweight LKM based native live forensics solutions.
 \item Numerous tools are compared for their performmance under the same SCADA-MCS operating conditions.
 \item Analyzes the potential for combining two or more existing tools efficiently to support live forensics on SCADA-MCS.
 \item Provides requisite capabilities for any of these tools -- either independently or in combination to support comprahensive live forensics on SCADA-MCS.
@@ -98,16 +111,16 @@ The proposed solution is designed conforming to the guidelines of OSA/OSE standa
 \caption{List of acronyms and notations used.}
 \begin{tabular}{llll}\toprule
 \textbf{Notation} & \textbf{Description}\\\toprule
-AC & Access Control\\
+%AC & Access Control\\
 ADU & Application Data Unit\\
 API & Application Programming Interface\\
-ARC & Architecture\\
+%ARC & Architecture\\
 ARM & Advanced Risk Machine\\
 CPS & Cyber Physical System\\
 DLL & Dynamically Link Library\\
 %FSM & Finite State Machine\\
-HW & Hardware\\
-IPC & Inter Process Call\\
+%HW & Hardware\\
+%IPC & Inter Process Call\\
 IR & Incident Response\\
 LKM & Loadable Kernel Module\\
 MCS & Machinery Control System \\
@@ -118,17 +131,20 @@ OSE & Open Systems Environment\\
 PDU & Protocol Data Unit\\
 PLC & Programmable Logic Controller\\
 PPC & Power PC\\
-RPC & Remote Procedure Call\\
 RAM & Random Access Memory\\
+RMFF & Rekall Memory Forensics Framework\\
+%RPC & Remote Procedure Call\\
 RTU & Remote Terminal Unit\\
-SW & Software\\
+%SW & Software\\
+TSK & The Sleuth Kit\\
+VMFF & Volatility Memory Forensics Framework\\
 \bottomrule
 \end{tabular}
 \label{tab:notations}
 \end{table}
 
 \subsection{Roadmap}
-The remainder of this paper is organized as follows. In section~\ref{sec:rw}, we review relevant background information and related works. Then in section~\ref{sec:sys-model}, we present the target MCS model followed by a detailed discussion on the design and implementation of the proposed solution in section~\ref{sec:sol-model}. We present results evaluating the proposed solution framework using the proposed metrics in section~\ref{sec:results}. Finally, we conclude this paper with concluding remarks with directions for future research in section~\ref{sec:conc}.
+The remainder of this paper is organized as follows. In section~\ref{sec:rw}, we review relevant background information and related works. Then in section~\ref{sec:sys-model}, we present the target MCS model followed by a detailed discussion on the design and implementation of the proposed prototype evaluation model in section~\ref{sec:eval}. We present results evaluating the proposed solution framework using the proposed metrics in section~\ref{sec:results}. Finally, we conclude this paper with concluding remarks with directions for future research in section~\ref{sec:conc}.
 
 \section{Related Work}
 A large portion of research in the domain of control systems forensics has focused Programmable logic controller (PLC) firmware, which provides a software-driven interface between system inputs and physically manifested outputs, is readily open to modification at the user level. PLC is a special form of microprocessor-based controller with proprietary operating system. Due to the unique architecture of PLC, traditional digital forensic tools are difficult to be applied. 
@@ -154,23 +170,62 @@ In~\cite{van2014control},
 
 
 
-\section{Background and Preliminaries}\label{sec:rw}
+\section{Preliminaries}\label{sec:rw}
 MCS Vulnerabilities can be broadly categorized into the following two groups -- \textit{Platform Specific Vulnerabilities} and \textit{Network Specific Vulnerabilities}.
 
-\subsection{ProfiBus -- A Review}
-Process Field Bus -- PROFIBUS -- is a standard for fieldbus communication in automation technology and used by Siemens. PROFIBUS is standardized in IEC 61158 and is the world's most successful fieldbus with 53.7 million devices installed by the end of 2015. Utilizing a single, standardized, application-independent communication protocol, PROFIBUS supports fieldbus solutions both in factory and process automation as well as in motion control and safety-related tasks.
+\subsection{Live Forensics}
+Live forensics remedies some of the problems introduced by traditional forensic acquisition by performing analysis on a live system. Live forensics evolved as a sub-discipline in response to the shortcomings of dead forensic acquisition. A key feature of live forensics is its ability to retrieve volatile information which would be absent from static or deadbox forensics. It is also useful in limiting acquired data to information relevant to the incident under investigation. The objective of both static and live forensics is the same -- to find evidentiary data in support of the hypothesis. Consequently, the only differentiator is that the artifacts are being discovered on a live running system against an active adversary in case of of live forensics\footnote{$https://www.symantec.com/connect/blogs/live-response-vs-traditional-forensics-0$}.
 
-%PROFINET is an open Industrial Ethernet standard developed by the PROFIBUS Organisation. PROFINET is completely standard Ethernet (IEEE802.3) and operates at 100Mbit/s over twisted-pair copper or fibre- optic cables making use of TCP/IP and other IT standards for non-real- time communications such as configuration and parameters. They also provides a ``real-time'' channel for time-critical communications such as process data.
+Live forensics also supports analysis of processes, events, actions, and the likes that are questionable and potential early indicators of an impending attack. Therefore, with appropriate live forensics tools and techniques, the analyst remotely examine running processes, dump physical memory, examine running services, etc. and  determine if the situation warrants an in-depth analysis of that system. Unlike dead box forensics wherein the analyst has to be on site to acquire the evidence drives, live forensics can be performed remotely, which is not only convenient but also saves a lot of time due to false positives.
 
-%\subsection{The Modbus Protocol -- A Review}
-%Modbus is a protocol for serial communication using either the RS-232 standard or the RS-485 standard. Modbus allows for one master device to communicate with many slave devices. Since only one slave device can communicate with the master device at any given moment, all communication must be initiated by the master device. In SCADA systems, this means that the RTUs and PLCs (slave devices) operate mostly autonomously, except when the supervisory system (master device) issues a command or requests telemetry data.
-%
-%\emph{Modbus Packet Structure} The Modbus TCP protocol uses a data structure called the Application Data Unit (ADU) to transmit data at the Application Layer. Each Modbus TCP ADU is composed of a Modbus Application (MBAP) header followed by a Modbus TCP Protocol Data Unit (PDU). The MBAP header contains five data fields for a total size of seven bytes. The first field is a two-byte  transaction ID, followed by a two-byte protocol ID field.  
-%
-%The third data field is a two-byte message length field which specifies the Modbus PDU size in bytes, and the MBAP header ends with a one-byte Unit ID field. The Modbus TCP PDU contains two fields for a total size varying between $4$ - $65535$ bytes. The first PDU entry is a \emph{one-byte function code} that represents the function of the request or response, followed by a \emph{variable length data field}. It is the data field that holds the actual payload for the corresponding request/response message.
+\subsection{Fieldbus -- A Review}\
+Fieldbus is the name of a family of industrial computer network protocols used for real-time distributed control, standardized as IEC 61158\footnote{$https://en.wikipedia.org/wiki/Fieldbus$}. Fieldbus works on a network structure which typically allows daisy-chain, star, ring, branch, and tree network topologies.
+
+\subsubsection{PROFIBUS -- \underline{PRO}cess \underline{FI}eld \underline{BUS} Protocol}
+Process Field Bus -- PROFIBUS -- is a standard for fieldbus communication in automation technology and used by Siemens. PROFIBUS is standardized in IEC 61158 and is the world's most successful fieldbus with 53.7 million devices installed by the end of 2015. Utilizing a single, standardized, application-independent communication protocol, PROFIBUS supports fieldbus solutions both in factory and process automation as well as in motion control and safety-related tasks. The fieldbus protocol that Siemens and other manufacturers in Europe developed evolved into present day PROFIBUS protocol.
+
+\subsection{The Modbus Protocol -- A Review}
+Modbus is a protocol for serial communication using either the RS-232 standard or the RS-485 standard. Modbus allows for one master device to communicate with many slave devices. Since only one slave device can communicate with the master device at any given moment, all communication must be initiated by the master device. In SCADA systems, this means that the RTUs and PLCs (slave devices) operate mostly autonomously, except when the supervisory system (master device) issues a command or requests telemetry data.
+
+\emph{Modbus Packet Structure} The Modbus TCP protocol uses a data structure called the Application Data Unit (ADU) to transmit data at the Application Layer. Each Modbus TCP ADU is composed of a Modbus Application (MBAP) header followed by a Modbus TCP Protocol Data Unit (PDU). The MBAP header contains five data fields for a total size of seven bytes. The first field is a two-byte  transaction ID, followed by a two-byte protocol ID field.  
+
+The third data field is a two-byte message length field which specifies the Modbus PDU size in bytes, and the MBAP header ends with a one-byte Unit ID field. The Modbus TCP PDU contains two fields for a total size varying between $4$ - $65535$ bytes. The first PDU entry is a \emph{one-byte function code} that represents the function of the request or response, followed by a \emph{variable length data field}. It is the data field that holds the actual payload for the corresponding request/response message.
+
+\subsection{MCS Operational Environment Challenges and Limitations}
+Below is a list of challenges and constraints in designing and developing tools and techniques to support live forensics in SCADA-MCS environment.
+
+\subsubsection{Hardware Platform Limitations} The three most popular HW ARCs for embedded components of MCS such as RTU and PLC are ``ARM'', ``PPC'', and ``$x86/x64$''. However, $x86/x64$ is out numbered by ARM and PPC by a significant margin. While open-source memory forensics frameworks such a Volatility and Linux do provide support for ARM and PPC, they are primarily built around $x86/x64$ systems. This is due to the enormous market share of Desktops/PCs.
+
+\subsubsection{Software Platform Limitations} Majority of networked components for SCADA run on legacy platforms with extremely small quantities of physical memory. Consequently, they have little room for natively expanding their capabilities to support augmented logging for IR and forensics analysis.
+
+\subsubsection{Lack of Standards and API Definitions} There is very limited information about the SCADA MCS architecture and system APIs available for building enhanced plug-in tools to support out-of-band processing to support forensics.
+
+\subsubsection{Proprietary Solutions} Proprietary tools have limited capabilities and economically infeasible. Furthermore, proprietary tools often tend to be tailored for very specific tasks and platforms. Such lack of flexibility is very concerning given the evolving and volatile state of cyber-attacks. Existing proprietary and open-source tools with live forensics capabilities are prohibitive from a resource standpoint -- massive memory footprint and significant IO bound operations topping the list of resource concerns.
+
+\subsubsection{Ready Adoption Challenges} Adoption of custom open-source tools ``as-is'' can present significant challenges with regards to legal and regulatory requirements. Porting necessary requirements for cyberforensics of SCADA system components into existing open-source tools warrants significant effort. 
+
+\subsubsection{High Degree of Proprietary Solutions and Heterogeneity} Not only are the solutions proprietary in nature due to the unique domain requirement of each and every control systems environment, but also there degree of heterogeneity among field devices even within the same domain is significant to have a ``one-size-fits-all'' solution. Such proprietary solutions with such heterogeneity will make live forensics extremely challenging some of which are as follows -- network constraints due to OEM restrictions, node/device constraints€“ due to variations in HW/SW, communications security €“due to legacy and resource constrained devices and proprietary protocols, and the likes.
+
+State-of-the-art tools with live forensics capabilities primarily include \textit{Volatility} and \textit{Rekall}. Both this frameworks currently provide very limited support for ARM and PowerPC (PPC) memory architectures, since they have been primarily developed around the x86 systems. While it is possible to expand either of these frameworks to support live forensics on MCS systems, it is significant effort to write a plugin/LKM for ARM/PPC memory architectures taking into considerations the subtle variations implemented by vendors creating proprietary memory architecture. 
 
 
-\begin{table*}
+
+\section{Prototype Model}\label{sec:sys-model}
+We utilize two vastly different methods -- Memory Analysis and Traffic Analysis. There two approaches have different purposes with regards to security and forensics analysis. However, the two methods can be coulped to work complimenting each other. Such a hybrid platform will enable robust security and forensics analysis. The open systems architecture prototype framework will use the following open source tools along with numerous custom tools.
+\begin{figure}[!t]
+\includegraphics[scale=0.25]{figures/kraft-arch.eps}
+\caption{Open Systems Architecture prototype supporting memory dump and fieldbus traffic analysis.}
+\label{fig:protot-arch}
+\end{figure}
+
+\begin{itemize}
+\item \textbf{LiME (Linux Memory Extractor).} LiME is an open source loadable kernel module that can acquire live memory from popular processor architectures -- x86/x64, PPC, and ARM. Furthermore, LiME can extract the live memory in three different formats -- .lime, .raw, . Compatible with desktop Linux distributions and Android. Does not include any tools to analyze the images it collects.
+
+\item \textbf{Bulk Extractor.} This is an open source file system forensics analysis tool suite. Unlike, LiME, bulk extractor is not capable of acquiring live memory. Furthermore, bulk extractor is also not capable of extracting process level information from a memory dump. However, the tool can scan memory dump images for certain types of forensically relevant information such as -- IP address, Network sockets, Credit card numbers, URLs, Passwords, and Encryption keys. While the tool evidently has limitations in processing live memory, its limited capabilities are very useful in correlating live memory information and raw packet capture providing a unique purview during security and forensics analysis.
+\end{itemize}
+
+\section{Validation Model}\label{sec:eval}
+\begin{table*}[!ht]
 \scriptsize
 \begin{center}
 \begin{tabular}{p{4.3cm}p{6.3cm}p{6.6cm}}\toprule
@@ -208,373 +263,19 @@ Process Field Bus -- PROFIBUS -- is a standard for fieldbus communication in aut
 	&	Capable of analyzing disk images for certain types of forensically relevant information (phone, CC numbers, URLs, etc.)	 &	Does not support memory analysis at process level unlike Volatility or Rekall	\\\bottomrule
 \end{tabular}
 \vspace{3mm}
-\caption{Summary of open-source forensics tools that support live forensics either directly or indirectly.}
+\caption{Summary of capabilities and limitations of open-source forensics tools that support live forensics both directly and indirectly.}
 \label{tab:tools}
 \end{center}
 \end{table*}
 
-\subsection{MCS Operational Environment Challenges and Limitations}
-Below is a list of challenges and constraints in designing and developing tools and techniques to support live forensics in SCADA-MCS environment.
-
-\subsubsection{Hardware Platform Limitations} The three most popular HW ARCs for embedded components of MCS such as RTU and PLC are ``ARM'', ``PPC'', and ``$x86/x64$''. However, $x86/x64$ is out numbered by ARM and PPC by a significant margin. While open-source memory forensics frameworks such a Volatility and Linux do provide support for ARM and PPC, they are primarily built around $x86/x64$ systems. This is due to the enormous market share of Desktops/PCs.
-
-\subsubsection{Software Platform Limitations} Majority of networked components for SCADA run on legacy platforms with extremely small quantities of physical memory. Consequently, they have little room for natively expanding their capabilities to support augmented logging for IR and forensics analysis.
-
-\subsubsection{Lack of Standards and API Definitions} There is very limited information about the SCADA MCS architecture and system APIs available for building enhanced plug-in tools to support out-of-band processing to support forensics.
-
-\subsubsection{Proprietary Solutions} Proprietary tools have limited capabilities and economically infeasible. Furthermore, proprietary tools often tend to be tailored for very specific tasks and platforms. Such lack of flexibility is very concerning given the evolving and volatile state of cyber-attacks. Existing proprietary and open-source tools with live forensics capabilities are prohibitive from a resource standpoint -- massive memory footprint and significant IO bound operations topping the list of resource concerns.
-
-\subsubsection{Ready Adoption Challenges} Adoption of custom open-source tools ``as-is'' can present significant challenges with regards to legal and regulatory requirements. Porting necessary requirements for cyberforensics of SCADA system components into existing open-source tools warrants significant effort. 
-
-\subsubsection{High Degree of Proprietary Solutions and Heterogeneity} Not only are the solutions proprietary in nature due to the unique domain requirement of each and every control systems environment, but also there degree of heterogeneity among field devices even within the same domain is significant to have a ``one-size-fits-all'' solution. Such proprietary solutions with such heterogeneity will make live forensics extremely challenging some of which are as follows -- network constraints due to OEM restrictions, node/device constraints€“ due to variations in HW/SW, communications security €“due to legacy and resource constrained devices and proprietary protocols, and the likes.
-%\begin{enumerate}
-%\item \textbf{Hardware Platform Limitations} -- The three most popular HW ARCs for embedded components of MCS such as RTU and PLC are ``ARM'', ``PPC'', and ``$x86/x64$''. However, $x86/x64$ is out numbered by ARM and PPC by a significant margin. While open-source memory forensics frameworks such a Volatility and Linux do provide support for ARM and PPC, they are primarily built around $x86/x64$ systems. This is due to the enormous market share of Desktops/PCs.
-%\item \textbf{Software Platform Limitations} -- Majority of networked components for SCADA run on legacy platforms with extremely small quantities of physical memory. Consequently, they have little room for natively expanding their capabilities to support augmented logging for IR and forensics analysis.
-%\item \textbf{Lack of Standards and API Definitions} -- There is very limited information about the SCADA MCS architecture and system APIs available for building enhanced plug-in tools to support out-of-band processing to support forensics.
-%\item \textbf{Proprietary Solutions} -- Proprietary tools have limited capabilities and economically infeasible. Furthermore, proprietary tools often tend to be tailored for very specific tasks and platforms. Such lack of flexibility is very concerning given the evolving and volatile state of cyber-attacks. Existing proprietary and open-source tools with live forensics capabilities are prohibitive from a resource standpoint -- massive memory footprint and significant IO bound operations topping the list of resource concerns.
-%\item \textbf{Ready Adoption Challenges} -- Adoption of custom open-source tools ``as-is'' can present significant challenges with regards to legal and regulatory requirements. Porting necessary requirements for cyberforensics of SCADA system components into existing open-source tools warrants significant effort. 
-%\end{enumerate}
-
-\subsection{Static VS. Dynamic LKMs}
-When developing kernel modules, there are two fundamental choices -- either a static module or a dynamic module. While both these kernel module types have a unique set of features, they also share some commonalities. Before the module is implemented, it is critical to know what does each type have to offer.
-
-\textbf{Static Module.} A static module is very robust and is integrated into the OS kernel by binding it to the base kernel (BK). Therefore, a static module will remain in memory whenever the system is booted and running. To unload a static kernel module, the base kernel has to be recompiled. Furthermore, the rigid binding of static module to the base kernel necessitates recompiling the core kernel whenever a change is made or a new functionality is added. Memory overhead is permanent â€“ module remains in the memory along with BK. Higher risk of errors in BK. Buggy module can destabilize the BK and prevent the system from booting â€“ this can create false positives for DoS attacks. Counterintuitive as it makes the design rigid and monolithic hindering the objective of a modular approach for an (M)OSA.Binding with BK does not add any significant performance improvement.
-
-\textbf{Dynamic Module.} Integrated into BK at run time when needed. Loaded dynamically when needed and then unloaded. Very flexible and can be easily modified to add additional functionalities. Memory overhead is temporary since they are loaded when actually being used. Eliminates risk of introducing errors into BK. Buggy modules do not have any bearing on the BK since they are not loaded until the system is up and running. Facilitates a modular design where in modules can be rapidly designed, developed and deployed with out of band testing. Dynamic modules are equally fast when loaded into memory since both modules resides in different parts of the same memory type.
-
-
-%\subsection{CPU Register Dumping Methods}
-%To find a way to include real-time register dumps in a toolkit, we looked at several Windows debugging utilities. In keeping with the project's goals, we searched for open source tools with the capability to collect trace data. Two met our criteria: OllyDbg and x64dbg. OllyDbg has been in use for a long time, but no longer seems to be under active development. x64dbg has support for more hardware architectures and is updated regularly, but requires certain DLL files to operate that are not included in older versions of Windows by default.
-%
-%Two topics remain to be investigated in the area of software debugging: Using OllyDbg or x64dbg to dump CPU registers in real time, and measuring the overhead of doing so. Since both debugging tools are designed to track only one program at a time, the former seems to be out of their scope. Even if this capability existed, it would also likely require the use of numerous interruptions to all other processes, which would interfere with the latency of any Modbus communications, and therefore break functionality of any embedded SCADA equipment.
-%
-%We also researched means of carrying out hardware traces, which we found to be uncommon. Although ARM builds a well-documented debug and trace subsystem, called CoreSight, into most of its chips, the subsystem is mostly used for debugging during hardware development, and is often inaccessible to the end user. We searched for similar implementations on other common embedded platforms, but found none. Even if others did exist, the feasibility of deploying a separate hardware trace solution for each one would be dubious.
-%Since neither hardware-based nor software-based register dumps have yielded promising results, we have temporarily suspended research into real-time CPU register dumps.
-%
-%Any live forensics tool must be capable of obtain critical incident information contained in the volatile data on a running system before -- \textit{shutting it down}; \textit{anticipated failure occurs}; or \textit{adversary executes a process either locally/remotely to eradicate all evidentiary data}. Therefore, such critical volatile data include -- current active processes, current running processes, open network connections, and executable mapped to processes, among others. Hence, the solution should facilitate rapid extraction of all volatile data, with added capabilities for dumping specific regions of the memory (registers, temp filesystem), process specific memory, etc. 
-
-
-
-\section{State-of-the-art Live Forensics Tools -- A Review}\label{sec:sota}
-%We model the target RTU as a state machine graph. The states of the RTU are denoted by the graph nodes and all transitions/events are denoted by the edges. The starting node of an edge denotes the state the RTU is in prior to the event and the end node of an edge denotes the the state the RTU is in at the end of the event.
-%
-%Let $\mathcal{G}=\mathcal{h}\mathcal{V}, \mathcal{E} \mathcal{i}$ denote a graph where $\mathcal{V} = \mathcal{h} v_1, v_2, \cdots v_n \mathcal{i}$ is the set of states the RTU can be in at any given time and $\mathcal{E} = \mathcal{h} e_1, e_2, \cdots e_m \mathcal{i}$ is the set of edges denoting the events that transition the state of the RTU. An edge $e_x = \mathcal{h} v_i, v_j\mathcal{i}$ represents an event that transitions the RTU from state $v_i$ to state $v_j$. Further, the set of states and events are categorized into an authorized set and an unauthorized set as follows -- $\mathcal{V}=\mathcal{h}\mathcal{V}_{auth}, \mathcal{V}_{unauth} \mathcal{i}$; $\mathcal{E}=\mathcal{h}\mathcal{E}_{auth}, \mathcal{E}_{unauth} \mathcal{i}$. If event $e_x = \mathcal{h} v_i, v_j\mathcal{i}$ that transitions the RTU from $v_i \in \mathcal{V}_{auth}$ to a state $v_j \in \mathcal{V}_{unauth}$, then $e_x \in \mathcal{E}_{unauth}$. Finally, there cannot be an event $e_x = \mathcal{h} v_i, v_j\mathcal{i}$ such that $v_i \in \mathcal{E}_{unauth}$ and $v_j \in \mathcal{E}_{unauth}$. This implies that when the RTU is in an unsecured state, it cannot transition to a secure state. The only possibilities are $e_x = \mathcal{h} v_i, v_j\mathcal{i}$ where $i==j$ or $j$ is a termination state.
-
-State-of-the-art tools with live forensics capabilities primarily include \textit{Volatility} and \textit{Rekall}. Both this frameworks currently provide very limited support for ARM and PowerPC (PPC) memory architectures, since they have been primarily developed around the x86 systems. While it is possible to expand either of these frameworks to support live forensics on MCS systems, it is significant effort to write a plugin/LKM for ARM/PPC memory architectures taking into considerations the subtle variations implemented by vendors creating proprietary memory architecture. 
-
-\subsection{SCADA-MCS -- Operational Environment Challenges}
-A majority of the MCS OE is comprised of legacy HW combined with proprietary protocols and OS. Further, there is very limited architecture specifications and API support and specifications for developing and integrating tools for supporting ``in-band'' native forensics analysis capabilities. The legacy nature of the MCS OE platform also makes it extremely hard for ``out-of-band'' forensics analysis.
-
-\begin{itemize}
-\item Proprietary tools are rigid due to customized solutions, have limited capabilities, and are prohibitively expensive. 
-
-\item APIs available on the target SCADA system for integrating live forensics tools are limited.
-
-\item Support for expand existing open source forensics tools to support SCADA live forensics are minimum.
-
-\item MODBUS TCP/IP on registered port 502 and Serial in either ASCII Mode or Binary Mode (RTU)
-
-\item Kernel support for custom APIs such as DLLs (Windows) and shared libraries (Unix/Linux).
-
-\item Wrapper functions for system calls such as libc, glibc, etc.
-\end{itemize}
-
-\section{KRAFT Model}
-KRAFT is a hybrid live forensics toolkit framework wherein we utilize two vastly different methods -- Memory Analysis and Traffic Analysis. There two approaches have different purposes with regards to security and forensics analysis. However, the two methods can be coulped to work complimenting each other. Such a hybrid tool platform will enable robust security and forensics analysis. The core of such analysis tools and techniques will be built around correlation.
-\begin{figure}[!t]
-\includegraphics[scale=0.25]{figures/kraft-arch.eps}
-\caption{KRAFT Architecture with both Memory Dump and Modbus Traffic Analysis capabilities.}
-\label{fig:kraft-arch}
-\end{figure}
-The open systems architecture toolkit framework KRAFT will use the following open source tools along with numerous custom tools.
-\begin{itemize}
-\item \textbf{LiME (Linux Memory Extractor).} LiME is an open source loadable kernel module that can acquire live memory from popular processor architectures -- x86/x64, PPC, and ARM. Furthermore, LiME can extract the live memory in three different formats -- .lime, .raw, . Compatible with desktop Linux distributions and Android. Does not include any tools to analyze the images it collects.
-
-\item \textbf{Bulk Extractor.} This is an open source file system forensics analysis tool suite. Unlike, LiME, bulk extractor is not capable of acquiring live memory. Furthermore, bulk extractor is also not capable of extracting process level information from a memory dump. However, the tool can scan memory dump images for certain types of forensically relevant information such as -- IP address, Network sockets, Credit card numbers, URLs, Passwords, and Encryption keys. While the tool evidently has limitations in processing live memory, its limited capabilities are very useful in correlating live memory information and raw packet capture providing a unique purview during security and forensics analysis.
-
-\end{itemize}
-
-
-
-
-%\begin{figure*}{!ht}
-%\scriptsize
-%\begin{center}
-%\begin{tikzpicture}[scale=0.23]
-%\tikzstyle{every node}+=[inner sep=0pt]
-%\draw [black] (7.3,-3.8) circle (3);
-%\draw (7.3,-3.8) node {$HW$};
-%\draw [black] (7.3,-3.8) circle (2.4);
-%\draw [black] (16.2,-3.8) circle (3);
-%\draw (16.2,-3.8) node {$ISA$};
-%\draw [black] (16.2,-12.3) circle (3);
-%\draw (16.2,-12.3) node {$CISC$};
-%\draw [black] (31.1,-3.8) circle (3);
-%\draw (31.1,-3.8) node {$RISC$};
-%\draw [black] (8.1,-12.3) circle (3);
-%\draw (8.1,-12.3) node {$x86$};
-%\draw [black] (19.4,-23.1) circle (3);
-%\draw (19.4,-23.1) node {$OS$};
-%\draw [black] (19.4,-23.1) circle (2.4);
-%\draw [black] (24.4,-12.3) circle (3);
-%\draw (24.4,-12.3) node {$other$};
-%\draw [black] (31.1,-12.3) circle (3);
-%\draw (31.1,-12.3) node {$PPC$};
-%\draw [black] (38.1,-12.3) circle (3);
-%\draw (38.1,-12.3) node {$ARM$};
-%\draw [black] (5.3,-32.6) circle (3);
-%\draw (5.3,-32.6) node {$windows$};
-%\draw [black] (12.6,-32.6) circle (3);
-%\draw (12.6,-32.6) node {$dos$};
-%\draw [black] (26.8,-32.6) circle (3);
-%\draw (26.8,-32.6) node {$unix$};
-%\draw [black] (34.2,-32.6) circle (3);
-%\draw (34.2,-32.6) node {$linux$};
-%\draw [black] (19.4,-32.6) circle (3);
-%\draw (19.4,-32.6) node {$other$};
-%\draw [black] (19.4,-47.6) circle (3);
-%\draw (19.4,-47.6) node {$protocol$};
-%\draw [black] (19.4,-47.6) circle (2.4);
-%\draw [black] (37.1,-42.7) circle (3);
-%\draw (37.1,-42.7) node {$profibus$};
-%\draw [black] (37.1,-50.4) circle (3);
-%\draw (37.1,-50.4) node {$profinet$};
-%\draw [black] (37.1,-58.6) circle (3);
-%\draw (37.1,-58.6) node {$modbus$};
-%\draw [black] (57,-37.2) circle (3);
-%\draw (57,-37.2) node {$OE_{FP}$};
-%\draw [black] (46.1,-51.4) circle (3);
-%\draw (46.1,-51.4) node {$tcp/ip$};
-%\draw [black] (50.2,-58.6) circle (3);
-%\draw (50.2,-58.6) node {$serial$};
-%\draw [black] (63.2,-58.6) circle (3);
-%\draw (63.2,-58.6) node {$ascii$};
-%\draw [black] (57,-48.8) circle (3);
-%\draw (57,-48.8) node {$rtu$};
-%\draw [black] (68.9,-37.2) circle (3);
-%\draw (68.9,-37.2) node {$end$};
-%\draw [black] (68.9,-37.2) circle (2.4);
-%\draw [black] (10.3,-3.8) -- (13.2,-3.8);
-%\fill [black] (13.2,-3.8) -- (12.4,-3.3) -- (12.4,-4.3);
-%\draw [black] (5.977,-1.12) arc (234:-54:2.25);
-%\draw (7.3,3.45) node [above] {$wait$};
-%\fill [black] (8.62,-1.12) -- (9.5,-0.77) -- (8.69,-0.18);
-%\draw [black] (16.2,-6.8) -- (16.2,-9.3);
-%\fill [black] (16.2,-9.3) -- (16.7,-8.5) -- (15.7,-8.5);
-%\draw [black] (18.16,-1.548) arc (129.09697:50.90303:8.706);
-%\fill [black] (29.14,-1.55) -- (28.83,-0.66) -- (28.2,-1.43);
-%\draw [black] (13.2,-12.3) -- (11.1,-12.3);
-%\fill [black] (11.1,-12.3) -- (11.9,-12.8) -- (11.9,-11.8);
-%\draw [black] (10.27,-14.37) -- (17.23,-21.03);
-%\fill [black] (17.23,-21.03) -- (17,-20.11) -- (16.31,-20.84);
-%\draw [black] (19.2,-12.3) -- (21.4,-12.3);
-%\fill [black] (21.4,-12.3) -- (20.6,-11.8) -- (20.6,-12.8);
-%\draw [black] (23.75,-9.404) arc (-181.7899:-254.70295:5.956);
-%\fill [black] (23.75,-9.4) -- (24.28,-8.62) -- (23.28,-8.59);
-%\draw [black] (23.14,-15.02) -- (20.66,-20.38);
-%\fill [black] (20.66,-20.38) -- (21.45,-19.86) -- (20.54,-19.44);
-%\draw [black] (31.1,-6.8) -- (31.1,-9.3);
-%\fill [black] (31.1,-9.3) -- (31.6,-8.5) -- (30.6,-8.5);
-%\draw [black] (34.051,-3.492) arc (81.17697:-2.23205:5.814);
-%\fill [black] (38.97,-9.46) -- (39.5,-8.68) -- (38.5,-8.64);
-%\draw [black] (28.9,-14.33) -- (21.6,-21.07);
-%\fill [black] (21.6,-21.07) -- (22.53,-20.89) -- (21.85,-20.16);
-%\draw [black] (36.038,-14.477) arc (-46.06024:-73.92345:32.906);
-%\fill [black] (22.32,-22.4) -- (23.22,-22.66) -- (22.95,-21.7);
-%\draw [black] (16.91,-24.78) -- (7.79,-30.92);
-%\fill [black] (7.79,-30.92) -- (8.73,-30.89) -- (8.17,-30.06);
-%\draw [black] (17.65,-25.54) -- (14.35,-30.16);
-%\fill [black] (14.35,-30.16) -- (15.22,-29.8) -- (14.41,-29.22);
-%\draw [black] (21.24,-25.47) -- (24.96,-30.23);
-%\fill [black] (24.96,-30.23) -- (24.86,-29.29) -- (24.07,-29.91);
-%\draw [black] (22.324,-23.759) arc (73.32499:41.28286:21.654);
-%\fill [black] (32.38,-30.22) -- (32.23,-29.28) -- (31.48,-29.94);
-%\draw [black] (19.4,-26.1) -- (19.4,-29.6);
-%\fill [black] (19.4,-29.6) -- (19.9,-28.8) -- (18.9,-28.8);
-%\draw [black] (16.437,-47.166) arc (-104.15196:-169.39098:14.744);
-%\fill [black] (16.44,-47.17) -- (15.78,-46.49) -- (15.54,-47.46);
-%\draw [black] (17.479,-45.298) arc (-143.51692:-167.71034:25.505);
-%\fill [black] (17.48,-45.3) -- (17.41,-44.36) -- (16.6,-44.95);
-%\draw [black] (19.4,-35.6) -- (19.4,-44.6);
-%\fill [black] (19.4,-44.6) -- (19.9,-43.8) -- (18.9,-43.8);
-%\draw [black] (25.47,-35.29) -- (20.73,-44.91);
-%\fill [black] (20.73,-44.91) -- (21.53,-44.41) -- (20.63,-43.97);
-%\draw [black] (32.09,-34.74) -- (21.51,-45.46);
-%\fill [black] (21.51,-45.46) -- (22.42,-45.25) -- (21.71,-44.54);
-%\draw [black] (39.99,-41.9) -- (54.11,-38);
-%\fill [black] (54.11,-38) -- (53.2,-37.73) -- (53.47,-38.69);
-%\draw [black] (39.6,-48.74) -- (54.5,-38.86);
-%\fill [black] (54.5,-38.86) -- (53.56,-38.88) -- (54.11,-39.72);
-%\draw [black] (39.44,-56.73) -- (43.76,-53.27);
-%\fill [black] (43.76,-53.27) -- (42.82,-53.38) -- (43.45,-54.16);
-%\draw [black] (47.93,-49.02) -- (55.17,-39.58);
-%\fill [black] (55.17,-39.58) -- (54.29,-39.91) -- (55.08,-40.52);
-%\draw [black] (40.1,-58.6) -- (47.2,-58.6);
-%\fill [black] (47.2,-58.6) -- (46.4,-58.1) -- (46.4,-59.1);
-%\draw [black] (53.2,-58.6) -- (60.2,-58.6);
-%\fill [black] (60.2,-58.6) -- (59.4,-58.1) -- (59.4,-59.1);
-%\draw [black] (51.91,-56.14) -- (55.29,-51.26);
-%\fill [black] (55.29,-51.26) -- (54.42,-51.64) -- (55.24,-52.21);
-%\draw [black] (58.847,-39.562) arc (34.74663:-2.43195:26.217);
-%\fill [black] (58.85,-39.56) -- (58.89,-40.5) -- (59.71,-39.93);
-%\draw [black] (57,-45.8) -- (57,-40.2);
-%\fill [black] (57,-40.2) -- (56.5,-41) -- (57.5,-41);
-%\draw [black] (18.724,-50.511) arc (14.66751:-273.33249:2.25);
-%\draw (12.89,-53.31) node [below] {$wait$};
-%\fill [black] (16.68,-48.83) -- (15.78,-48.55) -- (16.03,-49.52);
-%\draw [black] (16.72,-24.423) arc (324:36:2.25);
-%\draw (12.15,-23.1) node [left] {$wait$};
-%\fill [black] (16.72,-21.78) -- (16.37,-20.9) -- (15.78,-21.71);
-%\draw [black] (0.7,-3.8) -- (4.3,-3.8);
-%\fill [black] (4.3,-3.8) -- (3.5,-3.3) -- (3.5,-4.3);
-%\draw [black] (22.29,-46.8) -- (34.21,-43.5);
-%\fill [black] (34.21,-43.5) -- (33.3,-43.23) -- (33.57,-44.2);
-%\draw [black] (22.36,-48.07) -- (34.14,-49.93);
-%\fill [black] (34.14,-49.93) -- (33.42,-49.31) -- (33.27,-50.3);
-%\draw [black] (21.95,-49.18) -- (34.55,-57.02);
-%\fill [black] (34.55,-57.02) -- (34.14,-56.17) -- (33.61,-57.02);
-%\draw [black] (60,-37.2) -- (65.9,-37.2);
-%\fill [black] (65.9,-37.2) -- (65.1,-36.7) -- (65.1,-37.7);
-%\draw [black] (67.577,-34.52) arc (234:-54:2.25);
-%\draw (68.9,-29.95) node [above] {$0/1$};
-%\fill [black] (70.22,-34.52) -- (71.1,-34.17) -- (70.29,-33.58);
-%\end{tikzpicture}
-%\end{center}
-%\vspace{5mm}
-%\begin{center}
-%\caption{MCS Operating Environment fingerprinting engine.}
-%\end{center}
-%\end{figure*}
-
-
-\section{Solution Model}\label{sec:sol-model}
-
-\subsection{KRAFT Validation Metrics}
-We have also presented useful metrics for validation of the proposed solution for each of the two approaches -- \textit{Modbus Sniffing} and \textit{Memory Dumping}. We have also identified potential live forensics artifacts relevant to MCS OE that can be used as indicators of threat/attack, and serve as the baseline for augmenting KRAFT's live forensics capabilities. 
-%\begin{figure}\label{fig:cyft-mkm}
-%\includegraphics[scale=0.2]{figures/CyFT-MKM.eps}
-%\caption{â€¢}
-%\end{figure}
-\subsubsection{Metrics for Modbus Traffic Analysis Approach}
-We propose using the following metrics for validating the proposed KRAFT toolkit's performance under the modbus traffic analysis approach. While numerous metrics exist and provide robust validation, below are the metrics we specifically use for establishing baseline traffic pattern against which KRAFT's performance in effective live forensics of the MCS field devices will be measured. These metrics are -- 
-\begin{itemize}
-\item \textit{average number of packets per unit time}
-\item \textit{average request/response packet size per unit time per device type}
-\item \textit{average number of ingress/egress connections per device type}
-\item \textit{most frequently used and least frequently used function codes accessed per device type}
-\item \textit{average number of u-cast, m-cast, b-cast packets per unit time per device type}
-\item \textit{average number of errors reported per unit time per field device type}
-\item \textit{average number of request/response with non-standard protocols from unusual ports per unit time per device type}
-\end{itemize}
-
-\subsubsection{Metrics for Memory Dump Analysis Approach}
-We shall use use the following candidate metrics for validating the proposed KRAFT toolkit's performance under the memory dump analysis approach. The below candidate metrics for validation of KRAFT will be used to first establish a baseline traffic pattern against which KRAFT's ability to support effective live forensics of the MCS field devices will be measured. The suggested metrics are as follows  --
- \begin{itemize}
-\item Average allocated memory per process
-\item Number of DLLs/Library functions in memory
-\item Number of AC violations by processes
-\item Network IO usage
-\item Central Processing Unit (CPU) usage
-\item Number of failed processes/operations logged
-\item Number of IPC/RPC calls made per unit of time
-\end{itemize}
-
-%\begin{table*}
-%\begin{tabular}{ll}\toprule
-%\textbf{Modbus Sniffing}	&	\textbf{Memory Dump}	\\\toprule
-%Number of packets	&	Average allocated memory per process	\\
-%Packet size	&	Number of DLLs/Library functions in memory 	\\
-%Number of connections	&	Number of AC violations by processes 	\\
-%MFU function codes	&	Network IO usage	\\
-%Number of u-cast, m-cast, b-cast packets 	&	Central Processing Unit (CPU) usage	\\
-%Average number of errors reported 	&	Number of failed processes/operations logged	\\
-%Number of non-standard protocols/ports	&	Number of IPC/RPC calls made per unit of time	\\\bottomrule
-%\end{tabular}
-%\caption{Solution vectors supporting MCS live forensics.}
-%\end{table*}
-
-%\begin{figure}\label{fig:mcs-proto-fp}
-%\includegraphics[scale=0.25]{figures/modbus-fp.eps}
-%\caption{MCS Field-bus protocol fingerprinting engine.}
-%\end{figure}
-%
-%
-%\subsection{FSM-based Live Forensics on MCS}
-%
-%\begin{figure}\label{fig:mcs-oe-fp}
-%\includegraphics[scale=0.16]{figures/mcs-fp-engine.eps}
-%\caption{MCS Operating Environment fingerprinting engine.}
-%\end{figure}
-
-%We have modeled the system states for the target MCS system as a graph with nodes denoting the system states and edges denoting the transitions. We then model the target system by processing continuous stream of network traffic. An alternate model is to model the process memory dump into a graph of relevant states and transitions.
-%
-%A state machine-based model is well suited for identifying outlier conditions that can transition the system to unknown, unsecured, and unauthorized states. There are numerous language specific open-source tools that can be extended to SCADA MCS live forensics
-%
-%Potential candidate tools for phase-II prototyping include â€“ PyFSM, TuLiP (python), Java EasyFSM.
-
-Some of the open source memory forensics tools we have explored in this research work include -- \textit{Rekall, Volatility, Bulk Extractor,} and \textit{LiME}.
-\begin{table}[!h]
-\begin{center}
-\begin{tabular}{ll}\toprule
-\textbf{Deviation Impetus}	&	\textbf{Potential Target	}\\\toprule
-Unusual access requests	&	-- to devices that were never accessed before	\\
-	&	-- from devices that have never requested before	\\
-	&	-- to secure/restricted resources (system files)	\\\midrule
-Unusual commands		&	-- authorized patterns not seen before	\\
-	&	-- unauthorized patterns	\\
-	&	-- unreasonable rates 	\\\midrule
-Unusual packet format	&	-- valid header but not seen before	\\
-	&	-- unknown packet header	\\
-	&	-- payload size unusual	\\\midrule
-Unusual account access	&	-- too many requests	\\
-	&	-- too many failed requests	\\
-	&	-- requests to unknown accounts	\\
-	&	-- Missing regular and expected requests\\\bottomrule
-\end{tabular}
-\vspace{2mm}
-\caption{Indicators of abnormal events -- malicious and system malfunctions.}
-\label{tab:deviation}
-\end{center}
-\end{table}
-
-\section{Model Evaluation}
 \subsection{Validation Framework}
-This week, we conducted some testing on Rekall?s WinPMem tool to determine how different operational parameters affect the time and storage space it requires to capture memory dumps.  
-\begin{table*}[h]
-\begin{center}
-\begin{tabular}{l l}\toprule
-\textbf{Artifact}	&	\textbf{Evidentiary Information}	\\\toprule
-Timestamps	&	Process initialization; Process termination	\\\midrule
-Usage pattern	&	  Resident memory usage; CPU and IO activity; Disk capacity and usage; Network activity	\\\midrule
-Security/Audit logs	&	 Unauthorized login attempts; Unauthorized access attempts	\\\midrule
-System logs	&	Crash, Halt; Shutdown, Reboot	\\\midrule
-Activity logs	 &	Processes and Process IDs; Executable-Process ID maps; Resource utilization; Process automation	\\\midrule
-Kernel logs (e.g., Unix sys call printk())	&	 Modules loaded and unloaded; Emergency messages; Critical errors\\\bottomrule
-\end{tabular}
-\end{center}
-\end{table*}
-Our tests included:
+We conduct some testing on Rekall's WinPMem tool to determine how different operational parameters affect the time and storage space it requires to capture memory dumps. Our tests included:
 \begin{enumerate}
 \item Capturing memory dumps of the same system with different amounts of system memory installed, and recording the time and storage overhead for each.  
 \item Capturing memory dumps using different file compression options: the snappy algorithm, the zlib algorithm, and no compression.  Although Rekall?s website claims that snappy compression is the fastest option, we found that storing the files in uncompressed form was often slightly faster on the machine we used.  
 \item Observing WinPMem's behavior when we try to append a new memory dump to an existing one. This is the default behavior for when the specified output file already exists.
 \end{enumerate}
-%\begin{table*}[!t]
-%\begin{center}
-%\begin{tabular}{l l l l}
-%\textbf{Port} & \textbf{Service} & \textbf{Vulnerability} & \textbf{Attack Vector} \\\toprule
-%21/TCP  & FTP & Transports userID \& passwords in clear text &
-%Man-in-the-Middle: sniffing Masquerading\\
-%23/TCP & Telnet & Transports everything as plain text & 
-%Man-in-the-Middle: sniffing Masquerading\\
-%80/TCP & HTTP & Unpatched Web server & 
-%Input validation attacks; injections (sql), url/parameter tampering, etc.\\
-%xxx/TCP & Proprietary Service on 502/TCP & Buffer \& Heap Overflows & Remote exploitation via injections (shellcode), unvalidated string input, etc.\\\bottomrule
-%\end{tabular}
-%\caption{IT network vulnerabilities that impact MCS.}
-%\end{center}
-%\label{tab:it-vul}
-%\end{table*}
+
 
 \subsection{Transmitting memory dumps via Modbus TCP}
 From number of bytes (2) in the message length field, we conclude that each Modbus TCP frame can hold a payload up to 65535 bytes in size. Since very few embedded systems with system memory of 64 KB or less are still in use, any implementation of memory dump transmission via Modbus TCP should be designed to accommodate file splitting on the server side and file splicing on the client side. Table 1 shows how different sizes of memory dump would be split for transmission:
@@ -596,30 +297,36 @@ We have implemented a custom kernel module that is a packet crafter such that th
 %\end{center}
 %\end{table}
 
+\section{Validation Results}\label{sec:results}
 
-%\begin{table*}[!htbp]
-%\begin{center}
-%\begin{tabular}{lllllll}\toprule
-%	&	\textbf{zlib}	&	\textbf{zlib w/ truncation}	&	\textbf{snappy}	&	\textbf{snappy w/ truncation}	&	\textbf{No compression} &	\textbf{No compression w/ truncation}	\\
-%\textbf{Total runtime (s)}	&	451.1445138	&	435.1035562	&	329.1414529	&	349.0159306	&	311.5651912	&	309.7229189	\\
-%\textbf{Memdump size (B)}	&	5,347,984,723	&	5,440,281,251	&	5,024,617,223	&	5,920,743,621	&	8,564,930,530	&	8,564,930,531	\\
-%%\textbf{Size of Memdump (KiB)}	&	5222641.331	&	5312774.659	&	4906852.757	&	5781976.192	&	8364189.971	&	8364189.972	\\
-%\textbf{Memdump size(KB)}	&	5347984.723	&	5440281.251	&	5024617.223	&	5920743.621	&	8564930.53	&	8564930.531	\\
-%%\textbf{Size of Memdump (MiB)}	&	5100.235675	&	5188.256503	&	4791.848395	&	5646.461125	&	8168.154268	&	8168.154269	\\
-%\textbf{Memdump size (MB)}	&	5347.984723	&	5440.281251	&	5024.617223	&	5920.743621	&	8564.93053	&	8564.930531	\\\bottomrule
-%\end{tabular}
-%\caption{Compression time and size.}
-%\label{tab:compression-truncation}
-%\end{center}
-%\end{table*}
+\begin{table*}[!htbp]
+\begin{center}
+\begin{tabular}{lllllll}\toprule
+	&	\textbf{zlib}	&	\textbf{zlib with}	&	\textbf{snappy}	&	\textbf{snappy with}	&	\textbf{No compression} &	\textbf{No compression}	\\
+		&		&	\textbf{truncation}	&	&	\textbf{truncation}	&	\textbf{No truncation} &	\textbf{with truncation}	\\\toprule
+\textbf{Total runtime (s)}	&	451.15	&	435.10	&	329.14	&	349.02	&	311.57	&	309.72	\\\\
+%\textbf{Memdump size (B)}	&	5,347,984,723	&	5,440,281,251	&	5,024,617,223	&	5,920,743,621	&	8,564,930,530	&	8,564,930,531	\\\\
+%\textbf{Size of Memdump (KiB)}	&	5222641.33	&	5312774.66	&	4906852.76	&	5781976.19	&	8364189.97	&	8364189.97	\\\\
+%\textbf{Memdump size(KB)}	&	5347984.723	&	5440281.251	&	5024617.223	&	5920743.621	&	8564930.53	&	8564930.531	\\\\
+\textbf{Size of Memdump (MiB)}	&	5100.24	&	5188.26	&	4791.85	&	5646.46	&	8168.15	&	8168.15	\\\bottomrule
+%\textbf{Memdump size (MB)}	&	5347.984723	&	5440.281251	&	5024.617223	&	5920.743621	&	8564.93053	&	8564.930531	\\
+\end{tabular}
+\vspace{3mm}
+\caption{Compression time and size on Raspberry PI 3.}
+\label{tab:compression-truncation}
+\end{center}
+\end{table*}
 
 
 \subsection{Observations}
-In item-3 above, we expected winpmem to either append a complete memory dump to the existing one and double its size, or to append a subset of the address space that had changed since the previous dump was captured. Instead, the program returned an error.  We intend to investigate this further.
+\begin{itemize}
+\item Winpmem provided by Rekall is expected to either append a complete memory dump to the existing one and double its size, or to append a subset of the address space that had changed since the acquisition of the previous dump. Instead, the program returned an error. While we have every intention to investigate this further, for the work presented paper, we dont have additional information.
 
-Rekall has a small but powerful suite of built-in plugins to analyze Windows registry entries.  In this example, we will use them to find and display registry key pairs contained in our memory dump.  With our image file open in Rekall, we begin by calling the hives plugin.
+\item Rekall has a small but powerful suite of built-in plugins to analyze Windows registry entries.  In this example, we will use them to find and display registry key pairs contained in our memory dump.  With our image file open in Rekall, we begin by calling the hives plugin.
+\end{itemize}
 
-\subsection{Results}\label{sec:results}
+
+\subsection{Results}
 
 \subsection{Secure Memory Dump Transfer to MTU}
 Protecting the data against corruption and truncation would require additional measures. Two possibilities exist to alert the client to any errors in data transmission or splicing:
