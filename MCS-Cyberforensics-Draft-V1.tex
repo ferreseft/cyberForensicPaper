@@ -28,39 +28,45 @@
 \DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
 
 \begin{document}
-\title{KRAFT -- \textbf{K}ernel module d\textbf{R}iven m\textbf{A}chinery control system \textbf{F}orensics using remo\textbf{T}e memory acquisition}
-\author{\IEEEauthorblockN{Avinash Srinivasan\thanks{Dr. Srinivasan is a FELLOW at the National 
-Cybersecurity Institute, Washington D.C.} }
-\IEEEauthorblockA{}
-%Computer and Information Sciences\\
-%Temple University\\Philadelphia, PA 19121\\
-%Email: avinash@temple.edu\\
-%Fellow -- National Cybersecurity Institute}
+%\title{KRAFT -- \textbf{K}ernel module d\textbf{R}iven m\textbf{A}chinery control system \textbf{F}orensics using remo\textbf{T}e memory acquisition}
+\title{Empirical Evaluation of Suitability of Existing Forensics Solutions to Support Live Forensics on SCADA Mchinery Control Systems}
+\author{\IEEEauthorblockN{Avinash Srinivasan}
+\IEEEauthorblockA{
+Computer and Information Sciences\\
+Temple University\\Philadelphia, PA 19121\\
+Email: avinash@temple.edu}
 \and
 \IEEEauthorblockN{Frank Ferrese}
-\IEEEauthorblockA{}
-%Electrical and Computer Engineering\\
-%Temple University\\Philadelphia, PA 19121\\
-%Email: frank.ferrese@tdi.com}
-}
+\IEEEauthorblockA{
+Naval Surface Warfare Center\\
+Philadelphia, PA 19121\\
+Email: frank.ferrese@navy.mil
+}}
 \maketitle
 
 \begin{abstract}
-SCADA-based Machinery Control Systems (SCADA-MCSs) from leading vendors today are more vulnerable than ever before. To further complicate the secure and reliable operations of these systems, their cyber-physical environment opens a whole new world of vulnerabilities which can be exploited, many of which are freely available on the Internet. Vulnerabilities of such MCSs with majority proprietary system components and protocols can have vulnerabilities ranging from the very basic issues such as systems without passwords or with hard-coded passwords known to everyone to configuration issues and other software bugs. 
+SCADA-based Machinery Control Systems (SCADA-MCSs) from leading vendors today are more vulnerable than ever before. To further complicate the secure and reliable operations of these systems, their cyber-physical environments open a whole new world of vulnerabilities which can be readily exploited, many of which are freely available on the Internet. SCADA-MCS being mission critical, must be continuously operational with zero downtime. Consequently, a forensic investigator cannot shut down the system to capture evidentiary data and analyze them. In such scenarios where there is zero downtime tolerance, live forensics is the only viable solution for conducting a digital investigation. Live forensics involves performing data acquisition and analysis on a running system. This will allow for a complete and detailed analysis while the system is still up and running, therefore having little to no effect on the mission.
 
-In this paper, we design and implement KRAFT -- a prototype live forensic tool suite that will enable reconstruction of breach methodologies adopted by the adversary. Since Machinery Controls are mission critical systems, they must be continuously operational with zero downtime. Consequently, a forensic investigator cannot shut down the system to capture evidentiary data and analyze them. In such scenarios with zero downtime tolerance, live forensics is the only viable solution for conducting a digital investigation. Live forensics involves performing data acquisition and analysis on a running system. This will allow for a complete and detailed analysis while the system is still up and running, therefore having little to no effect on the mission.
+In this paper, we evaluate some of the most prpolar and powerful forensics tools and frameworks to determine their suitability for porting to SCADA environment, specifically for MCS. We design and develop a rudimentary prototype of a live forensics framework for SCADA-MCS that can readily integrate the existing tools and techniques on to a common platform. Our prototype is designed conforming to \textit{Open Systems Architecture} (OSA) to support cross vendor and cross platform solutions. Our empirical analysis highlights the strengths and weakness of tools studied proposes other requisite capabilities for tools to support a comprahensive live forensics on SCADA-MCS.
 \end{abstract}
 
 \begin{keywords}
-Authentication, BitTorrent, covert channel, handshake,  information hiding, p2p networks, security, steganography.
+Confidentiality, cyber-physical systems, data leak, fieldbus, integrity, live forensics, networks, SCADA, security.
 \end{keywords}
 
 \section{Introduction}
+Vulnerabilities of such MCSs with majority proprietary system components and protocols can have vulnerabilities ranging from the very basic issues such as systems without passwords or with hard-coded passwords known to everyone to configuration issues and other software bugs. 
+
 Control systems domain has slowly yet steadily transitioned from the traditional all-analog domain to a more cyber-driven domain – popularly known as the Cyber Physical Systems (CPS). Despite a rapid adoption of the new cyber-driven technology, the physical realm of the CPS is predominantly comprised of legacy and proprietary hardware. Consequently, such proprietary aspects of control systems environments present new challenges hindering the translation and integration of modern state-of-the-art forensics analysis tools and techniques into the control systems domain. 
 
-Supervisory Control and Data Acquisition (SCADA) systems are a type of Industrial Control System (ICS) that monitor and/or control legacy systems remotely. SCADA systems typically operate on large-scale processes across multiple sites, and can be used over long distances. A SCADA system consists of one supervisory system and many slave systems. Slave systems are divided into two subcategories -- \emph{Remote Terminal Units} (RTUs), and \emph{Programmable Logic Controllers (PLCs)}. Originally, RTU devices only collected telemetry data, and only PLC devices possessed process control capabilities. However, current incarnations of the two products have gained enough features that the distinction is no longer meaningful. When SCADA systems were first developed, they communicated solely using the Modbus serial standard, RS485. Recently, many SCADA systems have been configured to communicate via TCP/IP instead of Modbus. This allows easier integration with existing high-bandwidth infrastructure, but introduces an array of risks of exposing system vulnerabilities to a third party and the \textit{Internet} at large.
-\subsection{Attacks on Control Systems -- Scope of the Problem}
-\begin{table*}
+Supervisory Control and Data Acquisition (SCADA) systems are a type of Industrial Control System (ICS) that monitor and/or control legacy systems remotely. SCADA systems typically operate on large-scale processes across multiple sites, and can be used over long distances. A SCADA system consists of one supervisory system and many slave systems. Slave systems are divided into two subcategories -- \emph{Remote Terminal Units} (RTUs), and \emph{Programmable Logic Controllers (PLCs)}. 
+
+Originally, RTU devices only collected telemetry data, and only PLC devices possessed process control capabilities. However, current incarnations of the two products have gained enough features that the distinction is no longer meaningful. When SCADA systems were first developed, they communicated solely using the Modbus serial standard, RS485. Recently, many SCADA systems have been configured to communicate via TCP/IP instead of Modbus. This allows easier integration with existing high-bandwidth infrastructure, but introduces an array of risks of exposing system vulnerabilities to a third party and the \textit{Internet} at large.
+
+SCADA-MCS systems were originally created to be deployed in non-networked environments. Therefore they lack of adequate security against Internet-based threats and cyber-related forensics. In recent years, SCADA systems have undergone significant technology advancement that potentially increase the risks to which they are exposed. Among these risks, one that is the most evident and crucial is its increased connectivity that could permit remote controls over the Internet, or the incorporation of general purpose tools, thus incorporating already known vulnerabilities of these.
+
+Any cyber-attack against SCADA systems demands forensic investigation to understand the cause and effects of the intrusion or disruption on such systems. Therefore, SCADA system forensics is an essential process within the cyber-security lifecycle that not only helps to identify the cause of an incident and those responsible but to help develop and design more secure CPS and critical infrastructure systems of the future. However, a SCADA system has a critical requirement of being continuously operational and therefore a forensic investigator cannot turn off the SCADA system for data acquisition and analysis. 
+\begin{table*}[!h]
 \centering
 \begin{tabular}{l l l l l}\toprule
 \textbf{Incident} & \textbf{Year} & \textbf{Vulnerability} & \textbf{Malware} & \textbf{Attack Vector}\\\toprule
@@ -72,21 +78,18 @@ European Energy Company & 2016 & Windws Antivirus &  SFG malware & Security appl
 \caption{Major Cyberqattacks on Control Systems}
 \label{tab:ics-attacks}
 \end{table*}
+Current live forensic tools are typically used to acquire and examine memory from computers running either Windows or Unix. This makes them incompatible with embedded devices found on SCADA systems that have their own bespoke operating system. Additionaly, only a limited number of forensics tools have been developed for SCADA systems, with no development of tools to acquire the program code from PLCs. With direct access to the memory addresses of the PLC, PLC debugging tools have promising functionalities as a forensic tool , such as the ``Snapshot'' function that allows users to directly take values from the memory addresses of the PLC, without vendor specific software.
 
-The following are emerging standards for ICS environments that offer some security guidance -- i) ANSI/ISA- 62443-3-2 is a security standard specific to ICS environments that focuses on the network segmentation and isolation of these environments; and  ii) NIST SP800-82r2, \textit{Guide to Industrial Control Systems (ICS) Security} is directed at ICS/SCADA systems and was published in February 2015. The U.S. Department of Homeland Security's \textit{Industrial Control System Cyber Emergency Response Team} (ICS-CERT) final incident response statistics reported 295 incidents involving critical infrastructure in the U.S. during 2015, compared to 245 ICS-CERT-investigated incidents in 2014.
+\subsection{Attacks on Control Systems -- Scope of the Problem}
 
 \subsection{Solution Novelty and Summary of Contributions}
 The proposed solution is designed conforming to the guidelines of OSA/OSE standards. Consequently, the solution framework provides several benefits over custom and proprietary solutions. Some of the the key benefits are delineated below --
 \begin{itemize}
-\item Enables acquisition of critical data -- both performance and attack related -- most of which are volatile at various levels of granularity -- process memory, kernel logs, register values, temporary files/file-system, field bus traffic, network/socket connections, IP/MAC addresses, RPCs, and the likes.
-\item KRAFT toolkit framework is designed in alignment with open systems architecture to facilitate cross-vendor and cross-platform integration.
-\item Solution framework is expandable, i.e., plug-in modules with advanced forensics and incident response capabilities can be rapidly developed and seamlessly integrated into KRAFT leveraging its open and well defined APIs. 
-%This is a critical requirement given the ever-evolving digital world and attack sophistication.
-\item KRAFT can handle any open or proprietary field-bus/communication protocols, and software and hardware platforms with its unique fingerprinting engine.
-%\item The FSM based modeling of the MCS supports semantically differentiating attack alerts into malicious events and non-malicious system events causing malfunction.
-%\item FSM-based analysis engine enables fine tuning Type-I and Type-II error rates with rules for minimizing false alerts.
-%\item During post-breach analysis, using an offline FSM engine, the analyst can re-create a very accurate timeline of events during the attack. The various states and transitions derived during the analysis will help identify and holes in policies or mechanisms, that can be effectively remedied.
-\item KRAFT is designed around the philosophy of open systems architecture and environment to minimize porting efforts across control systems and other cyber physical domains.  
+\item Empirically measures the performance of state-of-the-art forensics tools. 
+\item Empirical validation is performed in realworld SCADA-MCS settings.
+\item Numerous tools are compared for their performmance under the same SCADA-MCS operating conditions.
+\item Analyzes the potential for combining two or more existing tools efficiently to support live forensics on SCADA-MCS.
+\item Provides requisite capabilities for any of these tools -- either independently or in combination to support comprahensive live forensics on SCADA-MCS.
 \end{itemize}
 
 \begin{table}[!t]
@@ -128,12 +131,19 @@ SW & Software\\
 The remainder of this paper is organized as follows. In section~\ref{sec:rw}, we review relevant background information and related works. Then in section~\ref{sec:sys-model}, we present the target MCS model followed by a detailed discussion on the design and implementation of the proposed solution in section~\ref{sec:sol-model}. We present results evaluating the proposed solution framework using the proposed metrics in section~\ref{sec:results}. Finally, we conclude this paper with concluding remarks with directions for future research in section~\ref{sec:conc}.
 
 \section{Related Work}
-SCADA (Supervisory Control and Data Acquisition System) systems were originally created to be deployed in non-networked environments. Therefore they lack of adequate security against Internet-based threats and cyber-related forensics. In recent years, SCADA systems have undergone a series of changes that might increase the risks to which they are exposed. Among these risks it can be observed that its increased connectivity may permit remote controls over the Internet, or the incorporation of general purpose tools, thus incorporating already known vulnerabilities of these. Any cyber-attack against SCADA systems demands forensic investigation to understand the cause and effects of the intrusion or disruption on such systems. However, a SCADA system has a critical requirement of being continuously operational and therefore a forensic investigator cannot turn off the SCADA system for data acquisition and analysis. In~\cite{}This paper leads to the creation of a high level software application capable of detecting critical situations like abnormal changes of sensor reads, illegal penetrations, failures, physical memory content and abnormal traffic over the communication channel. One of the main challenges is to achieve the development of a tool that has minimal impact over the SCADA resources, during the data acquisition process.
+A large portion of research in the domain of control systems forensics has focused Programmable logic controller (PLC) firmware, which provides a software-driven interface between system inputs and physically manifested outputs, is readily open to modification at the user level. PLC is a special form of microprocessor-based controller with proprietary operating system. Due to the unique architecture of PLC, traditional digital forensic tools are difficult to be applied. 
+
+In~\cite{yau2015plc}, authors propose a program called \textit{Control Program Logic Change Detector} (CPLCD), which works with a set of \textit{Detection Rules} (DRs) to detect and record undesired incidents on interfering normal operations of PLCs. In order to prove the feasibility of their CPLCD solution, authors set up two experiments for detecting two common PLC attacks.and illustrate the advantages of using a network traffic analyzer such as wireshark in tandem with CPLCD for performing digital forensic investigation on PLCs.
+
+In~\cite{basnight2013firmware} authors note that current efforts to protect PLCs against firmware attacks are hindered by a lack of prerequisite research regarding details of attack development and implementation. In their effort, authors address threats posed by PLC firmware counterfeiting and the feasibility of such attacks, this research explores the vulnerability of common controllers to intentional firmware modifications. In particular,  this work derives the firmware update validation method used for the Allen-Bradley ControlLogix PLC. Through a proof-of-concept, authors demonstrate how to alter a legitimate firmware update and successfully upload it to a ControlLogix L61. Subsequently, they present possible mitigation strategies which includes digitally signed and encrypted firmware as well as preemptive and post-mortem analysis methods to provide protection. Authors conclude their work noting that their work will motivate future research in PLC firmware security through direct example of firmware counterfeiting.
+
+In~\cite{taveras2013scada} authors create a high level software application capable of detecting critical situations like abnormal changes of sensor reads, illegal penetrations, failures, physical memory content and abnormal traffic over the communication channel in a SCADA environment. A key challenges authors are faced is to minimize the impact of the tool on the SCADA resources, during the data acquisition process.
+
+Authors in~\cite{eden2015forensic} provide an overall forensic taxonomy of the SCADA system incident response model. The proposed taxanomy model discusses the development of forensic readiness within SCADA system investigations, including the challenges faced by the SCADA forensic investigator and suggests ways in which the process may be improved.
+
+In~\cite{wu2015exploring}, authors explore the problem of acquiring program code from PLCs under two hypotheses -- \textit{1) Program code is an important forensic artefact that can be used to determine an attacker's intentions;} and \textit{2) PLC debugging tools can be used for forensics to facilitate the acquisition and analysis of the program code from PLCs.} Based on the experiments conducted using tools from NIST CFTT, the results rejected the second hypothesis since their tool -- PLC Logger -- had failed half of the tests. With this, authors conclude that the PLC Logger in its current state has limited suitability as a forensic tool. To be accepted as a forensically sound tool, the shortcomings have to be addressed.
 
 In~\cite{ahmed2012scada}, 
-
-
-SCADA system forensics is an essential process within the cyber-security lifecycle that not only helps to identify the cause of an incident and those responsible but to help develop and design more secure CPS and critical ionfrastructure systems of the future. To this aim, authors in~\cite{eden2015forensic} provide an overall forensic taxonomy of the SCADA system incident response model. The proposed taxanomy model discusses the development of forensic readiness within SCADA system investigations, including the challenges faced by the SCADA forensic investigator and suggests ways in which the process may be improved.
 
 
 
@@ -142,68 +152,60 @@ In~\cite{stirland2014developing},
 
 In~\cite{van2014control}, 
 
-Current live forensic tools are typically used to acquire and examine memory from computers running either Windows or Unix. This makes them incompatible with embedded devices found on SCADA systems that have their own bespoke operating system. Additionaly, only a limited number of forensics tools have been developed for SCADA systems, with no development of tools to acquire the program code from PLCs. In their work\cite{wu2015exploring}, authors explore this problem with two main hypotheses in mind -- \textit{1) Program code is an important forensic artefact that can be used to determine an attacker's intentions;} and \textit{2) PLC debugging tools can be used for forensics to facilitate the acquisition and analysis of the program code from PLCs.} With direct access to the memory addresses of the PLC, PLC debugging tools have promising functionalities as a forensic tool , such as the ``Snapshot'' function that allows users to directly take values from the memory addresses of the PLC, without vendor specific software. Based on the experiments conducted using tools from NIST CFTT, the results rejected the second hypothesis since their tool -- PLC Logger -- had failed half of the tests. With this, authors conclude that the PLC Logger in its current state has limited suitability as a forensic tool. To be accepted as a forensically sound tool, the shortcomings have to be addressed.
-
-PLC is a special form of microprocessor-based controller with proprietary operating system. Due to the unique architecture of PLC, traditional digital forensic tools are difficult to be applied. To address this problem, in~\cite{yau2015plc}, authors propose a program called \textit{Control Program Logic Change Detector} (CPLCD), which works with a set of \textit{Detection Rules} (DRs) to detect and record undesired incidents on interfering normal operations of PLCs. In order to prove the feasibility of their CPLCD solution, authors set up two experiments for detecting two common PLC attacks.and illustrate the advantages of using a network traffic analyzer such as wireshark in tandem with CPLCD for performing digital forensic investigation on PLCs.
-
-Any cyber-attack against SCADA systems demands forensic investigation to understand the cause and effects of the intrusion or disruption on such systems. However, a SCADA system has a critical requirement of being continuously operational and therefore a forensic investigator cannot turn off the SCADA system for data acquisition and analysis. Therefore, in~\cite{taveras2013scada} authors discuss the creation of a high level software application capable of detecting critical situations like abnormal changes of sensor reads, illegal penetrations, failures, physical memory content and abnormal traffic over the communication channel, among other things. However, one of the key challenges that the authors need to address in designing and developing their proposed software is to keep the oimpact of the software on SCADA resources, during the data acquisition process.
-
-Programmable logic controller (PLC) firmware, which provides a software-driven interface between system inputs and physically manifested outputs, is readily open to modification at the user level. In~\cite{basnight2013firmware} authors note that current efforts to protect PLCs against firmware attacks are hindered by a lack of prerequisite research regarding details of attack development and implementation. In their effort, authors address threats posed by PLC firmware counterfeiting and the feasibility of such attacks, this research explores the vulnerability of common controllers to intentional firmware modifications. In particular,  this work derives the firmware update validation method used for the Allen-Bradley ControlLogix PLC. Through a proof-of-concept, authors demonstrate how to alter a legitimate firmware update and successfully upload it to a ControlLogix L61. Subsequently, they present possible mitigation strategies which includes digitally signed and encrypted firmware as well as preemptive and post-mortem analysis methods to provide protection. Authors conclude their work noting that their work will motivate future research in PLC firmware security through direct example of firmware counterfeiting.
 
 
 \section{Background and Preliminaries}\label{sec:rw}
 MCS Vulnerabilities can be broadly categorized into the following two groups -- \textit{Platform Specific Vulnerabilities} and \textit{Network Specific Vulnerabilities}.
-\subsection{The Modbus Protocol -- A Review}
-Modbus is a protocol for serial communication using either the RS-232 standard or the RS-485 standard. Modbus allows for one master device to communicate with many slave devices. Since only one slave device can communicate with the master device at any given moment, all communication must be initiated by the master device. In SCADA systems, this means that the RTUs and PLCs (slave devices) operate mostly autonomously, except when the supervisory system (master device) issues a command or requests telemetry data.
 
-\noindent \emph{Modbus Packet Structure} The Modbus TCP protocol uses a data structure called the Application Data Unit (ADU) to transmit data at the Application Layer. Each Modbus TCP ADU is composed of a Modbus Application (MBAP) header followed by a Modbus TCP Protocol Data Unit (PDU). The MBAP header contains five data fields for a total size of seven bytes. The first field is a two-byte  transaction ID, followed by a two-byte protocol ID field.  
+\subsection{ProfiBus -- A Review}
+Process Field Bus -- PROFIBUS -- is a standard for fieldbus communication in automation technology and used by Siemens. PROFIBUS is standardized in IEC 61158 and is the world's most successful fieldbus with 53.7 million devices installed by the end of 2015. Utilizing a single, standardized, application-independent communication protocol, PROFIBUS supports fieldbus solutions both in factory and process automation as well as in motion control and safety-related tasks.
 
-The third data field is a two-byte message length field which specifies the Modbus PDU size in bytes, and the MBAP header ends with a one-byte Unit ID field. The Modbus TCP PDU contains two fields for a total size varying between $4$ - $65535$ bytes. The first PDU entry is a \emph{one-byte function code} that represents the function of the request or response, followed by a \emph{variable length data field}. It is the data field that holds the actual payload for the corresponding request/response message.
+%PROFINET is an open Industrial Ethernet standard developed by the PROFIBUS Organisation. PROFINET is completely standard Ethernet (IEEE802.3) and operates at 100Mbit/s over twisted-pair copper or fibre- optic cables making use of TCP/IP and other IT standards for non-real- time communications such as configuration and parameters. They also provides a ``real-time'' channel for time-critical communications such as process data.
 
+%\subsection{The Modbus Protocol -- A Review}
+%Modbus is a protocol for serial communication using either the RS-232 standard or the RS-485 standard. Modbus allows for one master device to communicate with many slave devices. Since only one slave device can communicate with the master device at any given moment, all communication must be initiated by the master device. In SCADA systems, this means that the RTUs and PLCs (slave devices) operate mostly autonomously, except when the supervisory system (master device) issues a command or requests telemetry data.
 %
-%\subsection{NT Kernel Data Structures}
-%Rekall's documentation refers to Windows Virtual Address Descriptor (VAD) Tree entries as a means of detecting running applications that are otherwise hidden so we researched some background information about it. Each VAD node stores the amount of memory requested by the corresponding VirtualAlloc() call, the address range thereof, and a small amount of metadata (called VAD tags). The VAD Tree is organized as an AVL tree, a type of self-balancing binary search tree.
+%\emph{Modbus Packet Structure} The Modbus TCP protocol uses a data structure called the Application Data Unit (ADU) to transmit data at the Application Layer. Each Modbus TCP ADU is composed of a Modbus Application (MBAP) header followed by a Modbus TCP Protocol Data Unit (PDU). The MBAP header contains five data fields for a total size of seven bytes. The first field is a two-byte  transaction ID, followed by a two-byte protocol ID field.  
+%
+%The third data field is a two-byte message length field which specifies the Modbus PDU size in bytes, and the MBAP header ends with a one-byte Unit ID field. The Modbus TCP PDU contains two fields for a total size varying between $4$ - $65535$ bytes. The first PDU entry is a \emph{one-byte function code} that represents the function of the request or response, followed by a \emph{variable length data field}. It is the data field that holds the actual payload for the corresponding request/response message.
+
+
 \begin{table*}
+\scriptsize
 \begin{center}
-\begin{tabular}{p{4cm}p{6.5cm}p{6.7cm}}\toprule
+\begin{tabular}{p{4.3cm}p{6.3cm}p{6.6cm}}\toprule
 \textbf{Open Source Tools}	&	\textbf{Capabilities}	&	\textbf{Limitations}	\\\toprule
 \textbf{Rekall Memory Forensics Framework}	&	A computer forensics tool that scans a memory dump image or virtual machine snapshot and extracts useful information 	&	Requires a ``profile'' (aka config file) to analyze images of systems with address spaces that aren't included in its releases  	\\\\
-&	Includes a toolkit for acquiring memory dumps on Windows, Linux, and OSX systems  &	Generating a profile requires compiling Rekall provided kernel module \\\\
+&	Includes a toolkit for acquiring memory dumps on Windows, Linux, and OSX systems  &	Generating profiles requires compiling Rekall provided kernel module \\\\
 	&	Can be used either as a standalone application or as a scripting library to automate memory analysis  	&	Analysis capabilities are primarily limited to x86/amd64 systems	\\\midrule
 	
-	
-	
 \textbf{Volatility Memory Forensics Framework}	&	Functionality can be extended with plugins and address space profiles	 &  Volatility is not capable of acquiring memory dumps -- it is dependent on other tools like LiME\\\\
-
-	&	Forensics tool-suite that scans and extracts information from memory-dump images of Win, OS X, Linux, \& Android systems &	  Framework's profile subsystem has compatibility limitations similar to that of Rekall\\\\
-	
+	&	Forensics tool-suite that scans and extracts information from memory dump images of Win, OSX, Linux, \& Android systems &	  Framework's profile subsystem has compatibility limitations similar to that of Rekall\\\\
 	&	&	Compatible with ARM systems, primarily Android, does not carry over to other embedded ARM systems running desktop Linux \\\midrule
 	
 	
 	
-\textbf{Volatilitux}	&	Released in 2010 to add Linux compatibility in Volatility 	&	Not actively updated since 2010, and has limited support for Linux Kernel beyond 2.6.x	\\
-	&	Has compatibility with ARM-based desktop Linux distributions	&		\\
-	&		&	Compatibility is strictly limited to images captured using Volatilitux	\\
+\textbf{Volatilitux}	&	Released in 2010 to add Linux compatibility in Volatility 	&	Not actively updated since 2010, and has limited support for Linux Kernel beyond 2.6.x	\\\\
+	&		Has compatibility with ARM-based desktop Linux distributions &	Compatibile only with images captured using Volatilitux	\\\\
 	&		&	Very limited analysis capability -- only 5 commands available	\\\midrule
 	
 	
-\textbf{LiME (Linux Memory Extractor)}	&	Linux LKM capable of acquiring memory dump in several different formats -- ``.lime'', ``.raw'', and ``padded''	&	Only capable of memory acquisition, no processing and analysis capability 	\\\\
+\textbf{LiME (Linux Memory Extractor)}	&	Linux LKM capable of acquiring memory dump in several different formats -- ``.lime'', ``.raw'', and ``padded''	&	 Lacks memory dump processing and analysis capability	\\\\
 	&	Compatible with desktop Linux distributions and Android	&		\\\midrule
 	
 	
-\textbf{Dumpchk.exe}	& Microsoft freeware utility for validating Windows memory dumps 	&	Only supports Windows memory dumps	\\\\
+\textbf{Dumpchk.exe}	& Microsoft freeware for validating Windows memory dumps 	&	Only supports Windows memory dumps	\\\\
 
 	&	Limited capability of parsing certain types of metadata from memory dumps 	&	Proprietary and non-extensible	\\
 	&		&		\\\midrule
 	
 	
-\textbf{Autopsy/	The Sleuth Kit (TSK)} &	Disk forensics analysis tool	capable of handling numerous file system types for disk analysis &	Does not offer any memory forensics analysis or memory acquisition support	\\
-	&		&		\\\midrule
+\textbf{Autopsy/	The Sleuth Kit (TSK)} &	Disk forensics analysis tool	capable of handling numerous file system types for disk analysis &	Does not support memory acquisition or memory analysis\\\\\midrule
 	
 	
 \textbf{Bulk Extractor}	&	Disk forensics analysis tool	&	Can only process acquired memory images for network connection, registry keys, sockets, etc.	\\\\
 
-	&	Capable of analyzing disk images for certain types of forensically relevant information (phone and credit card numbers, URLs, etc.)	&	No capability of process analysis	\\\bottomrule
+	&	Capable of analyzing disk images for certain types of forensically relevant information (phone, CC numbers, URLs, etc.)	 &	Does not support memory analysis at process level unlike Volatility or Rekall	\\\bottomrule
 \end{tabular}
 \vspace{3mm}
 \caption{Summary of open-source forensics tools that support live forensics either directly or indirectly.}
@@ -264,9 +266,11 @@ State-of-the-art tools with live forensics capabilities primarily include \texti
 A majority of the MCS OE is comprised of legacy HW combined with proprietary protocols and OS. Further, there is very limited architecture specifications and API support and specifications for developing and integrating tools for supporting ``in-band'' native forensics analysis capabilities. The legacy nature of the MCS OE platform also makes it extremely hard for ``out-of-band'' forensics analysis.
 
 \begin{itemize}
-\item Proprietary tools, on the  rigid, limited capabilities, prohibitive costs. 
+\item Proprietary tools are rigid due to customized solutions, have limited capabilities, and are prohibitively expensive. 
 
-\item APIs available on the target SCADA system for integrating live forensics tools \& to expand existing open source forensics tools to support SCADA live forensics.
+\item APIs available on the target SCADA system for integrating live forensics tools are limited.
+
+\item Support for expand existing open source forensics tools to support SCADA live forensics are minimum.
 
 \item MODBUS TCP/IP on registered port 502 and Serial in either ASCII Mode or Binary Mode (RTU)
 
