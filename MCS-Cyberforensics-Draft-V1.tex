@@ -26,7 +26,7 @@
 \newtheorem{prob}{Research Challenge}
 \DeclarePairedDelimiter\ceil{\lceil}{\rceil}
 \DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
-
+\pagenumbering{arabic}
 \begin{document}
 %\title{KRAFT -- \textbf{K}ernel module d\textbf{R}iven m\textbf{A}chinery control system \textbf{F}orensics using remo\textbf{T}e memory acquisition}
 \title{Empirical Evaluation of Forensics Solutions for Live Forensics on SCADA Mchinery Control Systems}
@@ -65,7 +65,9 @@ Originally, RTU devices only collected telemetry data, and only PLC devices poss
 
 SCADA-MCS systems were originally created to be deployed in non-networked environments. Therefore they lack of adequate security against Internet-based threats and cyber-related forensics. In recent years, SCADA systems have undergone significant technology advancement that potentially increase the risks to which they are exposed. Among these risks, one that is the most evident and crucial is its increased connectivity that could permit remote controls over the Internet, or the incorporation of general purpose tools, thus incorporating already known vulnerabilities of these.
 
-Any cyber-attack against SCADA systems demands forensic investigation to understand the cause and effects of the intrusion or disruption on such systems. Therefore, SCADA system forensics is an essential process within the cyber-security lifecycle that not only helps to identify the cause of an incident and those responsible but to help develop and design more secure CPS and critical infrastructure systems of the future. However, a SCADA system has a critical requirement of being continuously operational and therefore a forensic investigator cannot turn off the SCADA system for data acquisition and analysis. 
+Any cyber-attack against SCADA systems demands forensic investigation to understand the cause and effects of the intrusion or disruption on such systems. Therefore, SCADA system forensics is an essential process within the cyber-security lifecycle that not only helps to identify the cause of an incident and those responsible but to help develop and design more secure CPS and critical infrastructure systems of the future. However, a SCADA system has a critical requirement of being continuously operational and therefore a forensic investigator cannot power-off the MCS system for data acquisition and analysis. 
+
+However, MCS being mission critical are required to be operational continuously with zero-tolerance for downtime. Consequently, incident responsers and forensics analysts cannot power off the system for traditional forensics data acquisition. Conseqently, live acquisition is the most logical solutions approach. One other complimentary technique is network and fieldbus traffic analysis and correlation of evidentary information across memory dump and packet captures for a more robust incident response and forensics analysis. 
 \begin{table*}[!h]
 \centering
 \begin{tabular}{l l l l l}\toprule
@@ -78,12 +80,14 @@ European Energy Company & 2016 & Windws Antivirus &  SFG malware & Security appl
 \caption{Major Cyberqattacks on Control Systems}
 \label{tab:ics-attacks}
 \end{table*}
+
 Current live forensic tools are typically used to acquire and examine memory from computers running either Windows or Unix. This makes them incompatible with embedded devices found on SCADA systems that have their own bespoke operating system. Additionaly, only a limited number of forensics tools have been developed for SCADA systems, with no development of tools to acquire the program code from PLCs. With direct access to the memory addresses of the PLC, PLC debugging tools have promising functionalities as a forensic tool , such as the ``Snapshot'' function that allows users to directly take values from the memory addresses of the PLC, without vendor specific software.
 
 \subsection{Attacks on Control Systems -- Scope of the Problem}
 \begin{itemize}
 \item Learning the vulnerabilities of the ICS and MCS systems and having the ability to test for possible defenses using an authentic testbed is valuable to cyber security. In particular, this line of research is in direct support of Presidential Policy Directive PPD- 21 and Presidential Decision Directive 63 to secure critical infrastructure from cyber attack~\cite{ppd21-63}. 
 
+\item On December 23, 2015, Ukrainian power companies experienced unscheduled power outages with a significant impact. Furthermore, there have also been reports of traces of malware found in a variety of critical infrastructure sectors across Ukrainian. The \textit{BlackEnergy} (BE) malware has been speculated as the culprit which is believed to have been delivered via spear phishing emails with malicious Microsoft Office attachments. Following the attacks, it was also confirmed that the actors wiped the master boot record of some systems by executing the \textit{KillDisk} malware as well as the targeted deletion of some logs at the conclusion of the cyber-attack~\cite{ukrain-2015, symantec-ukrain}.
 
 \item According to NCCIS/ICS-CERT~\cite{dhs-ics-cert}, the number of ICS incident reported in the United States between 2012 - 2015 are as follows -- 197 incidents (2012), 257 incidents (2013), 245 incidents (2014), 295 incidents in (2015). 
 
@@ -161,14 +165,14 @@ Authors in~\cite{eden2015forensic} provide an overall forensic taxonomy of the S
 
 In~\cite{wu2015exploring}, authors explore the problem of acquiring program code from PLCs under two hypotheses -- \textit{1) Program code is an important forensic artefact that can be used to determine an attacker's intentions;} and \textit{2) PLC debugging tools can be used for forensics to facilitate the acquisition and analysis of the program code from PLCs.} Based on the experiments conducted using tools from NIST CFTT, the results rejected the second hypothesis since their tool -- PLC Logger -- had failed half of the tests. With this, authors conclude that the PLC Logger in its current state has limited suitability as a forensic tool. To be accepted as a forensically sound tool, the shortcomings have to be addressed.
 
-In~\cite{ahmed2012scada}, 
-
-
-
-In~\cite{stirland2014developing}, 
-
-
-In~\cite{van2014control}, 
+%In~\cite{ahmed2012scada}, 
+%
+%
+%
+%In~\cite{stirland2014developing}, 
+%
+%
+%In~\cite{van2014control}, 
 
 
 
@@ -176,7 +180,7 @@ In~\cite{van2014control},
 MCS Vulnerabilities can be broadly categorized into the following two groups -- \textit{Platform Specific Vulnerabilities} and \textit{Network Specific Vulnerabilities}.
 
 \subsection{Live Forensics}
-Live forensics remedies some of the problems introduced by traditional forensic acquisition by performing analysis on a live system. Live forensics evolved as a sub-discipline in response to the shortcomings of dead forensic acquisition. A key feature of live forensics is its ability to retrieve volatile information which would be absent from static or deadbox forensics. It is also useful in limiting acquired data to information relevant to the incident under investigation. The objective of both static and live forensics is the same -- to find evidentiary data in support of the hypothesis. Consequently, the only differentiator is that the artifacts are being discovered on a live running system against an active adversary in case of of live forensics\footnote{$https://www.symantec.com/connect/blogs/live-response-vs-traditional-forensics-0$}.
+Live forensics remedies some of the problems introduced by traditional forensic acquisition by performing analysis on a live system. Live forensics evolved as a sub-discipline in response to the shortcomings of dead forensic acquisition. A key feature of live forensics is its ability to retrieve volatile information which would be absent from static or deadbox forensics. It is also useful in limiting acquired data to information relevant to the incident under investigation. The objective of both static and live forensics is the same -- to find evidentiary data in support of the hypothesis. Consequently, the only differentiator is that the artifacts are being discovered on a live running system against an active adversary in case of of live forensics~\cite{symantec-liveforensics}.
 
 Live forensics also supports analysis of processes, events, actions, and the likes that are questionable and potential early indicators of an impending attack. Therefore, with appropriate live forensics tools and techniques, the analyst remotely examine running processes, dump physical memory, examine running services, etc. and  determine if the situation warrants an in-depth analysis of that system. Unlike dead box forensics wherein the analyst has to be on site to acquire the evidence drives, live forensics can be performed remotely, which is not only convenient but also saves a lot of time due to false positives.
 
@@ -187,13 +191,13 @@ In~\cite{desso2014designing}, a security testbed is proposed primarily for testi
 
 The U.S. Navy MCS combines many systems into one network to both operate and monitor the entire engineering plant utilizing different communication protocols but does not span a large geographical area. Because of the small geographical area covered, by definition the MCS?s of the U.S. Navy are not SCADA systems. However, most recently amongst the cyber security and naval systems engineering personnel the term SCADA has become synonymous with both DCS and MCS type systems~\cite{scherer2011evolution}.
 
-\subsection{Fieldbus -- A Review}\
-Fieldbus is the name of a family of industrial computer network protocols used for real-time distributed control, standardized as IEC 61158\footnote{$https://en.wikipedia.org/wiki/Fieldbus$}. Fieldbus works on a network structure which typically allows daisy-chain, star, ring, branch, and tree network topologies.
+\subsection{Fieldbus -- A Review}
+Fieldbus is the name of a family of industrial computer network protocols used for real-time distributed control, standardized as IEC 61158~\cite{wiki-fieldbus}. Fieldbus works on a network structure which typically allows daisy-chain, star, ring, branch, and tree network topologies.
 
 \subsubsection{PROFIBUS -- \underline{PRO}cess \underline{FI}eld \underline{BUS} Protocol}
 Process Field Bus -- PROFIBUS -- is a standard for fieldbus communication in automation technology and used by Siemens. PROFIBUS is standardized in IEC 61158 and is the world's most successful fieldbus with 53.7 million devices installed by the end of 2015. Utilizing a single, standardized, application-independent communication protocol, PROFIBUS supports fieldbus solutions both in factory and process automation as well as in motion control and safety-related tasks. The fieldbus protocol that Siemens and other manufacturers in Europe developed evolved into present day PROFIBUS protocol.
 
-\subsection{The Modbus Protocol -- A Review}
+\subsection{MODBUS}
 Modbus is a protocol for serial communication using either the RS-232 standard or the RS-485 standard. Modbus allows for one master device to communicate with many slave devices. Since only one slave device can communicate with the master device at any given moment, all communication must be initiated by the master device. In SCADA systems, this means that the RTUs and PLCs (slave devices) operate mostly autonomously, except when the supervisory system (master device) issues a command or requests telemetry data.
 
 \emph{Modbus Packet Structure} The Modbus TCP protocol uses a data structure called the Application Data Unit (ADU) to transmit data at the Application Layer. Each Modbus TCP ADU is composed of a Modbus Application (MBAP) header followed by a Modbus TCP Protocol Data Unit (PDU). The MBAP header contains five data fields for a total size of seven bytes. The first field is a two-byte  transaction ID, followed by a two-byte protocol ID field.  
@@ -203,20 +207,32 @@ The third data field is a two-byte message length field which specifies the Modb
 \subsection{MCS Operational Environment Challenges and Limitations}
 Below is a list of challenges and constraints in designing and developing tools and techniques to support live forensics in SCADA-MCS environment.
 
-\subsubsection{Hardware Platform Limitations} The three most popular HW ARCs for embedded components of MCS such as RTU and PLC are ``ARM'', ``PPC'', and ``$x86/x64$''. However, $x86/x64$ is out numbered by ARM and PPC by a significant margin. While open-source memory forensics frameworks such a Volatility and Linux do provide support for ARM and PPC, they are primarily built around $x86/x64$ systems. This is due to the enormous market share of Desktops/PCs.
+\begin{enumerate}
+\item \textbf{Hardware Platform Limitations.} The three most popular HW ARCs for embedded components of MCS such as RTU and PLC are ``ARM'', ``PPC'', and ``$x86/x64$''. However, $x86/x64$ is out numbered by ARM and PPC by a significant margin. While open-source memory forensics frameworks such a Volatility and Linux do provide support for ARM and PPC, they are primarily built around $x86/x64$ systems. This is due to the enormous market share of Desktops/PCs.
 
-\subsubsection{Software Platform Limitations} Majority of networked components for SCADA run on legacy platforms with extremely small quantities of physical memory. Consequently, they have little room for natively expanding their capabilities to support augmented logging for IR and forensics analysis.
+\item \textbf{Software Platform Limitations} Majority of networked components for SCADA run on legacy platforms with extremely small quantities of physical memory. Consequently, they have little room for natively expanding their capabilities to support augmented logging for IR and forensics analysis.
 
-\subsubsection{Lack of Standards and API Definitions} There is very limited information about the SCADA MCS architecture and system APIs available for building enhanced plug-in tools to support out-of-band processing to support forensics.
+\item \textbf{Lack of Standards and API Definitions} There is very limited information about the SCADA MCS architecture and system APIs available for building enhanced plug-in tools to support out-of-band processing to support forensics.
 
-\subsubsection{Proprietary Solutions} Proprietary tools have limited capabilities and economically infeasible. Furthermore, proprietary tools often tend to be tailored for very specific tasks and platforms. Such lack of flexibility is very concerning given the evolving and volatile state of cyber-attacks. Existing proprietary and open-source tools with live forensics capabilities are prohibitive from a resource standpoint -- massive memory footprint and significant IO bound operations topping the list of resource concerns.
+\item \textbf{Proprietary Solutions} Proprietary tools have limited capabilities and economically infeasible. Furthermore, proprietary tools often tend to be tailored for very specific tasks and platforms. Such lack of flexibility is very concerning given the evolving and volatile state of cyber-attacks. Existing proprietary and open-source tools with live forensics capabilities are prohibitive from a resource standpoint -- massive memory footprint and significant IO bound operations topping the list of resource concerns.
 
-\subsubsection{Ready Adoption Challenges} Adoption of custom open-source tools ``as-is'' can present significant challenges with regards to legal and regulatory requirements. Porting necessary requirements for cyberforensics of SCADA system components into existing open-source tools warrants significant effort. 
+\item \textbf{Ready Adoption Challenges} Adoption of custom open-source tools ``as-is'' can present significant challenges with regards to legal and regulatory requirements. Porting necessary requirements for cyberforensics of SCADA system components into existing open-source tools warrants significant effort. 
 
-\subsubsection{High Degree of Proprietary Solutions and Heterogeneity} Not only are the solutions proprietary in nature due to the unique domain requirement of each and every control systems environment, but also there degree of heterogeneity among field devices even within the same domain is significant to have a ``one-size-fits-all'' solution. Such proprietary solutions with such heterogeneity will make live forensics extremely challenging some of which are as follows -- network constraints due to OEM restrictions, node/device constraints€“ due to variations in HW/SW, communications security €“due to legacy and resource constrained devices and proprietary protocols, and the likes.
+\item \textbf{High Degree of Proprietary Solutions and Heterogeneity} Not only are the solutions proprietary in nature due to the unique domain requirement of each and every control systems environment, but also there degree of heterogeneity among field devices even within the same domain is significant to have a ``one-size-fits-all'' solution. Such proprietary solutions with such heterogeneity will make live forensics extremely challenging some of which are as follows -- network constraints due to OEM restrictions, node/device constraints -- due to variations in HW/SW, communications security €“due to legacy and resource constrained devices and proprietary protocols, and the likes.
+\end{enumerate}
 
-State-of-the-art tools with live forensics capabilities primarily include \textit{Volatility} and \textit{Rekall}. Both this frameworks currently provide very limited support for ARM and PowerPC (PPC) memory architectures, since they have been primarily developed around the x86 systems. While it is possible to expand either of these frameworks to support live forensics on MCS systems, it is significant effort to write a plugin/LKM for ARM/PPC memory architectures taking into considerations the subtle variations implemented by vendors creating proprietary memory architecture. 
+Among contemporary state-of-the-art forensics tools with live forensics capabilities, two tools viz -- \textit{Volatility} and \textit{Rekall} -- have markedly better capabilities and performance. Despite their populatiry as current best choice solutions, both these tools currently offer very limited support for ARM and PowerPC (PPC) based systems. This is due to the fact that both \textit{Volatility} and \textit{Rekall} have been primarily designed and developed around the \textit{x86} systems. 
 
+In our on going broad research efforts in the areas of live forensics in SCADA-MCS systems, we have researched into the possibility of expanding either of these tools to support live forensics on ARM/PPC based SCADA-MCS systems. While it is certainly achievable, the level of effort for porting is significant, especially taking into considerations. This is particulary amplified when factoring the subtle variations implemented by vendors in a bid to create proprietary solutions seeking edge over competitors. 
+
+\begin{figure}[!t]
+\subfigure[MCS with PROFIBUS]{
+\includegraphics[scale=0.22]{figures/profibus.eps}}
+\subfigure[MCS with MODBUS]{
+\includegraphics[scale=0.22]{figures/modbus.eps}}
+\caption{SCADA-MCS systems architecture with two popular fieldbus protocols.}
+\label{fig:fieldbus}
+\end{figure}
 
 
 \section{Prototype Model}\label{sec:sys-model}
@@ -227,11 +243,23 @@ We utilize two vastly different methods -- Memory Analysis and Traffic Analysis.
 \label{fig:protot-arch}
 \end{figure}
 
-\begin{itemize}
-\item \textbf{LiME (Linux Memory Extractor).} LiME is an open source loadable kernel module that can acquire live memory from popular processor architectures -- x86/x64, PPC, and ARM. Furthermore, LiME can extract the live memory in three different formats -- .lime, .raw, . Compatible with desktop Linux distributions and Android. Does not include any tools to analyze the images it collects.
+\section{Memory Dump Analysis Tools}
 
-\item \textbf{Bulk Extractor.} This is an open source file system forensics analysis tool suite. Unlike, LiME, bulk extractor is not capable of acquiring live memory. Furthermore, bulk extractor is also not capable of extracting process level information from a memory dump. However, the tool can scan memory dump images for certain types of forensically relevant information such as -- IP address, Network sockets, Credit card numbers, URLs, Passwords, and Encryption keys. While the tool evidently has limitations in processing live memory, its limited capabilities are very useful in correlating live memory information and raw packet capture providing a unique purview during security and forensics analysis.
-\end{itemize}
+\subsection{Rekall} 
+
+\subsection{Volatility} 
+
+\subsection{Bulk Extractor.} This is an open source file system forensics analysis tool suite. Unlike, LiME, bulk extractor is not capable of acquiring live memory. Furthermore, bulk extractor is also not capable of extracting process level information from a memory dump. However, the tool can scan memory dump images for certain types of forensically relevant information such as -- IP address, Network sockets, Credit card numbers, URLs, Passwords, and Encryption keys. While the tool evidently has limitations in processing live memory, its limited capabilities are very useful in correlating live memory information and raw packet capture providing a unique purview during security and forensics analysis.
+
+
+
+\section{Live Acquisition Forensics Tools}
+
+\subsection{LiME (Linux Memory Extractor).} LiME is an open source loadable kernel module that can acquire live memory from popular processor architectures -- x86/x64, PPC, and ARM. Furthermore, LiME can extract the live memory in three different formats -- .lime, .raw, . Compatible with desktop Linux distributions and Android. Does not include any tools to analyze the images it collects.
+
+\subsection{Rekall Pmem}
+Pmem is a memory imaging application developed to run in conjunction with Rekall. It can be used to create memory dump images in the AFF4 format, and to inspect existing images.  It is available for Windows, OS X, and Linux platforms. For this exercise, we will use WinPmem 2.1, post 4 (the fourth build of WinPmem 2.1) to perform a memory dump of a Windows 7 system.  The latest version of the application is available for download from Rekall's GitHub repository
+
 
 \section{Validation Model}\label{sec:eval}
 \begin{table*}[!ht]
@@ -246,8 +274,6 @@ We utilize two vastly different methods -- Memory Analysis and Traffic Analysis.
 \textbf{Volatility Memory Forensics Framework}	&	Functionality can be extended with plugins and address space profiles	 &  Volatility is not capable of acquiring memory dumps -- it is dependent on other tools like LiME\\\\
 	&	Forensics tool-suite that scans and extracts information from memory dump images of Win, OSX, Linux, \& Android systems &	  Framework's profile subsystem has compatibility limitations similar to that of Rekall\\\\
 	&	&	Compatible with ARM systems, primarily Android, does not carry over to other embedded ARM systems running desktop Linux \\\midrule
-	
-	
 	
 \textbf{Volatilitux}	&	Released in 2010 to add Linux compatibility in Volatility 	&	Not actively updated since 2010, and has limited support for Linux Kernel beyond 2.6.x	\\\\
 	&		Has compatibility with ARM-based desktop Linux distributions &	Compatibile only with images captured using Volatilitux	\\\\
@@ -281,16 +307,16 @@ We utilize two vastly different methods -- Memory Analysis and Traffic Analysis.
 We conduct some testing on Rekall's WinPMem tool to determine how different operational parameters affect the time and storage space it requires to capture memory dumps. Our tests included:
 \begin{enumerate}
 \item Capturing memory dumps of the same system with different amounts of system memory installed, and recording the time and storage overhead for each.  
-\item Capturing memory dumps using different file compression options: the snappy algorithm, the zlib algorithm, and no compression.  Although Rekall?s website claims that snappy compression is the fastest option, we found that storing the files in uncompressed form was often slightly faster on the machine we used.  
-\item Observing WinPMem's behavior when we try to append a new memory dump to an existing one. This is the default behavior for when the specified output file already exists.
+\item Capturing memory dumps using different file compression options: the snappy algorithm, the zlib algorithm, and no compression.  Although Rekall's website claims that snappy compression is the fastest option, we found that storing the files in uncompressed form was often slightly faster on the machine we used.  
+\item Observing PMem's behavior when we try to append a new memory dump to an existing one. This is the default behavior for when the specified output file already exists.
 \end{enumerate}
 
 
-\subsection{Transmitting memory dumps via Modbus TCP}
-From number of bytes (2) in the message length field, we conclude that each Modbus TCP frame can hold a payload up to 65535 bytes in size. Since very few embedded systems with system memory of 64 KB or less are still in use, any implementation of memory dump transmission via Modbus TCP should be designed to accommodate file splitting on the server side and file splicing on the client side. Table 1 shows how different sizes of memory dump would be split for transmission:
+%\subsection{Transmitting memory dumps via Modbus TCP}
+%From number of bytes (2) in the message length field, we conclude that each Modbus TCP frame can hold a payload up to 65535 bytes in size. Since very few embedded systems with system memory of 64 KB or less are still in use, any implementation of memory dump transmission via Modbus TCP should be designed to accommodate file splitting on the server side and file splicing on the client side. Table 1 shows how different sizes of memory dump would be split for transmission:
 
-\subsubsection{Packet Crafting Module}
-We have implemented a custom kernel module that is a packet crafter such that the memory dump can be packaged into into independent data packets and/or embedded into unused bits of data packets exchanged between the field device and the MTU over the course of several request/response messages.
+%\subsubsection{Packet Crafting Module}
+%We have implemented a custom kernel module that is a packet crafter such that the memory dump can be packaged into into independent data packets and/or embedded into unused bits of data packets exchanged between the field device and the MTU over the course of several request/response messages.
 
 %\begin{table}[!h]
 %\begin{center}
@@ -306,7 +332,11 @@ We have implemented a custom kernel module that is a packet crafter such that th
 %\end{center}
 %\end{table}
 
-\section{Validation Results}\label{sec:results}
+\section{Forensics Tools Empirical Validation}\label{sec:results}
+
+\subsection{Prototype}
+
+\subsection{Results}
 
 \begin{table*}[!htbp]
 \begin{center}
@@ -334,21 +364,10 @@ We have implemented a custom kernel module that is a packet crafter such that th
 \item Rekall has a small but powerful suite of built-in plugins to analyze Windows registry entries.  In this example, we will use them to find and display registry key pairs contained in our memory dump.  With our image file open in Rekall, we begin by calling the hives plugin.
 \end{itemize}
 
-
-\subsection{Results}
-
-\subsection{Secure Memory Dump Transfer to MTU}
-Protecting the data against corruption and truncation would require additional measures. Two possibilities exist to alert the client to any errors in data transmission or splicing:
-
-\begin{enumerate}
-\item Transmit a single checksum for the entire memory dump, and verify the integrity of the reassembled dump-file at the MTU.This would require very little overhead. The comparison in Table~\ref{tab:frames-req} shows that for several common RAM configurations, packaging a checksum from the Linux command sha256sum with the memory dump requires no extra packets to be sent. Only one checksum of the memory dump file would be necessary because TCP already performs checksum-based verification of each packet. The only concerning aspect of this method is its potential to become too complex, in terms of computation and disk access, to be feasible on an embedded system.
-\item Overlap the transmissions such that each fragment is transmitted with a small amount of data
-from the previous fragment. This method would decrease the complexity of disk and computational operations, but transmission overhead would increase proportionally to the size of the overlap.
-\end{enumerate}
-
-
 \section{Conclusion and Future Work}\label{sec:conc}
+Cyberforensics capabilities and readiness in Machinery Control Systems' environment is a fundamental requirement within the cyber-security lifecycle that not only helps to identify the cause of an incident and traceback the perpeterators, but also helps develop and design more secure CPS and critical infrastructure systems of the future as part of a more robust cyberdefense strategy. However, MCS being mission critical are required to be operational continuously with zero-tolerance for downtime. Consequently, incident responsers and forensics analysts cannot power off the system for traditional forensics data acquisition. Conseqently, live acquisition is the most logical solutions approach. One other complimentary technique is network and fieldbus traffic analysis and correlation of evidentary information across memory dump and packet captures for a more robust incident response and forensics analysis. 
 
+In this paper, we evaluate some of the most prpolar and powerful forensics tools and frameworks to determine their suitability for porting to mission critical MCS environment. We design and develop a rudimentary prototype of a live forensics framework for SCADA-MCS that can readily integrate the existing tools and techniques on to a common platform. Our prototype is designed conforming to \textit{Open Systems Architecture} (OSA) to support cross vendor and cross platform solutions. Our empirical analysis highlights the strengths and weakness of tools studied proposes other requisite capabilities for tools to support a comprahensive live forensics on SCADA-MCS.
 \section{Definitions}
 \begin{myDef}
 Cyber-Physical Systems are co-engineered interacting networks of physical and computational components that are built from, and depend upon, the seamless integration of computational algorithms and physical components.
